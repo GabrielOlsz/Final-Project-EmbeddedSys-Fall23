@@ -1,0 +1,8 @@
+main
+	__CC2DW
+	__FillZeros
+	adcCONFIG
+	GPIODConfigInput
+	Joystick
+	GPIODConfigOutput
+	getAdcReading

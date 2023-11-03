@@ -1,0 +1,11 @@
+0	1	mikroCARM.exe -MSF -DBG -pSTM32F107VC -BIN -LHF -DL -SSA -O11111114 -fo10 -N"C:\Users\olszg\Documents\F23_Embedded_Systems_Class\FinalPart1\FinalPart1.mcpar" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for ARM\Defs\" -SP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for ARM\Uses\ST M3\" -SP"C:\Users\olszg\Documents\F23_Embedded_Systems_Class\FinalPart1\" -IP"C:\Users\Public\Documents\Mikroelektronika\mikroC PRO for ARM\Uses\ST M3\" "FinalPart1.c" "__Lib_Math.emcl" "__Lib_MathDouble.emcl" "__Lib_Delays.emcl" "__Lib_System_105_107.emcl" "__Lib_GPIO_32F10x_Defs.emcl" "__Lib_GPIO_32F10x.emcl"	 
+diagnostics: 0	122	Compilation Started	FinalPart1.c
+diagnostics: 174	123	Compiled Successfully	FinalPart1.c
+diagnostics: 0	127	All files Compiled in 47 ms	 
+hint: 0	1144	Used RX: 14 (88%)   Free RX: 2 (12%)	Used RX: 14 (88%)   Free RX: 2 (12%)
+hint: 0	1144	Static RAM (bytes): 24   Dynamic RAM (bytes): 65509	Static RAM (bytes): 24   Dynamic RAM (bytes): 65509
+hint: 0	1144	Used ROM (bytes): 2166 (1%)  Free ROM (bytes): 259978 (99%)	Used ROM (bytes): 2166 (1%)  Free ROM (bytes): 259978 (99%)
+diagnostics: 0	125	Project Linked Successfully	FinalPart1.mcpar
+diagnostics: 0	128	Linked in 171 ms	 
+diagnostics: 0	129	Project 'FinalPart1.mcpar' completed: 406 ms	 
+diagnostics: 0	103	Finished successfully: 02 Nov 2023, 21:43:10	FinalPart1.mcpar

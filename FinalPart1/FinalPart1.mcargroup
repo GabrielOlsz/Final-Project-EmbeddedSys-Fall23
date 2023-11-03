@@ -1,0 +1,6 @@
+[PROJECTS]
+Count=2
+Project0=..\Project1_Classic_Division.mcpar
+Project1=FinalPart1.mcpar
+[ActiveProject]
+Index=1
