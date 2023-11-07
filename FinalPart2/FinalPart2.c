@@ -1,7 +1,7 @@
 //**************************************************************************************************
-// Name: Professor Pellicano
-// Date: 12/31/9993
-// Course: ELEC3371-00
+// Name:
+// Date:
+// Course:
 // Description: This program initializes USART1. It waits to receive a character from USART
 //                                terminal tool in the development system and then it sends the same character
 //                                back. It uses baud rate of 56000. On SW12 set PA9 and PA10 to TX and RX.
@@ -10,6 +10,11 @@
 //**************************************************************************************************
 //VARIABLE DECLARATIONS
 unsigned int rcvrd;                        // Container for received data
+unsigned int right[10] = {"R","T"," ","P","R","E","S","S","E","D"}
+unsigned int left[10] = {"L","T"," ","P","R","E","S","S","E","D"}
+unsigned int up[10] = {"U","P"," ","P","R","E","S","S","E","D"}
+unsigned int down[10] = {"D","N"," ","P","R","E","S","S","E","D"}
+unsigned int i = 0;
 
 void InitializeUSART1();        // Sub function which initializes the registers to enable USART1
 
@@ -57,6 +62,11 @@ void main() {
 
 
         InitializeUSART1();                // Call sub function to initialize USART1
+        
+        for(i=0; i<10; i++){
+            while(USART1_SR.TC == 0){}
+            USART_DR = right[i];
+            }
 
 
 //**************************************************************************************************
@@ -221,5 +231,5 @@ unsigned int getAdcReading(){
     return (((33*ADC1_DR)/1280)-5);   //Made an y=mx+b equation to convert from 256 to 4096 scale to a 1 to 100 scale for controlling game speed
 }
 
-                                                                                                         //t//
+
  //****************************************************************************************
