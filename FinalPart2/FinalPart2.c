@@ -70,7 +70,7 @@ void main() {
           delay_ms(100);
 
         }
-}
+
  //**************************************************************************************************
 
 
@@ -92,8 +92,9 @@ void main() {
 		//while transmitter data register is not empty wait
 		 while (! (USART1_SR & (1<<7)) == 0x80) {}
 		 // If we want to send data out via USART, we use the same data register
-		 USART1_DR = rcvrd;                // transmit the received data
+		 USART1_DR = rcvrd-1;                // transmit the received data
 	}
+
 }
 //**************************************************************************************************
 //SUB FUNCTIONS
