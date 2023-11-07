@@ -15,6 +15,9 @@ unsigned int left[11] = {'L','T',' ','P','R','E','S','S','E','D', ' '};
 unsigned int up[11] = {'U','P',' ','P','R','E','S','S','E','D', ' '};
 unsigned int down[11] = {'D','N',' ','P','R','E','S','S','E','D', ' '};
 unsigned int click[11] = {'C','K',' ','P','R','E','S','S','E','D', ' '};
+unsigned int pause[6] = {'P','A','U','S','E',' '};
+unsigned int unpause[9] = {'U','N','P','A','U','S','E','D',' '};
+unsigned int pauseToggle = 0;
 unsigned int i = 0;
 void InitializeUSART1();	// Sub function which initializes the registers to enable USART1
 
@@ -73,6 +76,25 @@ void main() {
                 GPIODConfigOutput();
                 GPIOD_ODR = getAdcReading();
                 delay_ms(100);
+               
+               
+            //    while (!((USART1_SR & (1<<5))== 0x20)){}
+                
+                if (pauseToggle == 0 && (USART1_DR == 'p' || USART1_DR == 'P')){
+                 for (i = 0; i<6; i++){
+                 while(USART1_SR.TC == 0) {}
+                 USART1_DR = pause[i];
+                 }
+                 pauseToggle = 1;
+                }
+         //       while (! (USART1_SR & (1<<7)) == 0x80) {}
+                if (pauseToggle == 1 && (USART1_DR == 'p' || USART1_DR == 'P')){
+                 for (i = 0; i<9; i++){
+                 while(USART1_SR.TC == 0) {}
+                 USART1_DR = unpause[i];
+                 }
+                 pauseToggle = 1;
+                }
 
 	}
 
