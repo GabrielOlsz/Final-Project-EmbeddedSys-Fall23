@@ -10,7 +10,12 @@
 //**************************************************************************************************
 //VARIABLE DECLARATIONS
 unsigned int rcvrd;			// Container for received data
-
+unsigned int right[11] = {'R','T',' ','P','R','E','S','S','E','D', ' '};
+unsigned int left[11] = {'L','T',' ','P','R','E','S','S','E','D', ' '};
+unsigned int up[11] = {'U','P',' ','P','R','E','S','S','E','D', ' '};
+unsigned int down[11] = {'D','N',' ','P','R','E','S','S','E','D', ' '};
+unsigned int click[11] = {'C','K',' ','P','R','E','S','S','E','D', ' '};
+unsigned int i = 0;
 void InitializeUSART1();	// Sub function which initializes the registers to enable USART1
 
 //PD2 = LEFT , PD4 = UP, PB5 = DOWN, PA6 = RIGHT, PC13 = CENTER
@@ -49,8 +54,6 @@ void main() {
            GPIOC_CRL = 0x44444444; //SETS GPIOC LOW as input
            GPIOC_CRH = 0x44444444; //SETS GPIOC HIGH as input
 
-           GPIOD_CRL = 0x44444444; //SETS GPIOD LOW as input
-           GPIOD_CRH = 0x44444444; //SETS GPIOD HIGH as input
 
            adcCONFIG();
 
@@ -71,22 +74,6 @@ void main() {
                 GPIOD_ODR = getAdcReading();
                 delay_ms(100);
 
-		// The peripheral registers can be accessed by half-words (16-bit) or words (32-bit).
-		// Per data sheet (pg. 1007) USART1_SR consists of the following:
-		// 9   8   7   6   5   4    3   2  1  0
-		//CTS LBD TXE TC RXNE IDLE ORE NE FE PE
-		while (!((USART1_SR & (1<<5))== 0x20)){} // Check RXNE in USART1 Status Register.
-												 // while receiver data register is empty, wait
-		// You can also check RXNE directly
-		// while (!USART1_SR.RXNE = 1) {}    //while receiver data register is empty wait
-
-		// When data becomes available, we can store it on the CPU in a variable. Data is put into
-		// the USART data register USART1_DR (pg. 1010)
-		rcvrd = USART1_DR;    //read data from receiver data register
-		//while transmitter data register is not empty wait
-		 while (! (USART1_SR & (1<<7)) == 0x80) {}
-		 // If we want to send data out via USART, we use the same data register
-		 USART1_DR = rcvrd;                // transmit the received data
 	}
 
 }
@@ -129,6 +116,11 @@ void Joystick() {
           if(GPIOA_IDR.B6 == 0 & pa6state == 1){
                           GPIOE_ODR.B9 = 1;
                           GPIOE_ODR.B10 = 1;
+
+                 for (i = 0; i<11; i++){
+                 while(USART1_SR.TC == 0) {}
+                 USART1_DR = right[i];
+                 }
                           pa6state = 0;
           }
 
@@ -140,11 +132,13 @@ void Joystick() {
           if(GPIOB_IDR.B5 == 0 & pb5state == 1){
                           GPIOE_ODR.B8 = 1;
                           GPIOE_ODR.B12 = 1;
+
+                 for (i = 0; i<11; i++){
+                 while(USART1_SR.TC == 0) {}
+                 USART1_DR = down[i];
+                 }
                           pb5state = 0;
           }
-
-
-
 
 
           if(GPIOC_IDR.B13 == 1 & pc13state == 0){       // Function for Click button
@@ -153,6 +147,11 @@ void Joystick() {
           }
           if(GPIOC_IDR.B13 == 0 & pc13state == 1){
                            GPIOE_ODR = ~GPIOE_ODR;
+                 
+                   for (i = 0; i<11; i++){
+                   while(USART1_SR.TC == 0) {}
+                   USART1_DR = click[i];
+                   }
                            pc13state = 0;
           }
 
@@ -167,6 +166,10 @@ void Joystick() {
           if(GPIOD_IDR.B2 == 0 & pd2state == 1){
                           GPIOE_ODR.B13 = 1;
                           GPIOE_ODR.B14 = 1;
+                   for (i = 0; i<11; i++){
+                   while(USART1_SR.TC == 0) {}
+                   USART1_DR = left[i];
+                   }
                           pd2state = 0;
           }
 
@@ -182,6 +185,10 @@ void Joystick() {
           if(GPIOD_IDR.B4 == 0 & pd4state == 1){
                           GPIOE_ODR.B11 = 1;
                           GPIOE_ODR.B15 = 1;
+                     for (i = 0; i<11; i++){
+                     while(USART1_SR.TC == 0) {}
+                     USART1_DR = up[i];
+                     }
                           pd4state = 0;
           }
 
