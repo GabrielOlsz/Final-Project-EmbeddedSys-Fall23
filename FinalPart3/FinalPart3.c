@@ -86,7 +86,8 @@ void main() {
 
                  GPIODConfigInput();            //Function to call GPIOD config input
                  Joystick();                    //Function for joystick
-
+               	 Timer1Configuration();
+               	 Timer3IntConfiguration();
 
                 GPIODConfigOutput();           //Function to call GPIOD config output
                 GPIOD_ODR = getAdcReading();   //Display ADC signal to GPIOD LEDS
