@@ -41,7 +41,6 @@ void InitializeUSART1();        // Sub function which initializes the registers 
 void Timer1Configuration();
 void Timer3IntConfiguration();
 void initializeGPIO();
-void PinConfiguration();
 
 //**************************************************************************************************
 //INTERRUPT SERVICE ROUTINE
@@ -59,7 +58,8 @@ void TIMER1_ISR () iv IVT_INT_TIM1_UP {
      //split counter into two numbers, ex: 25 will split to 2 and 5
      first = counter / 10;    //used for DS2 AKA left 7 seg display
      second = counter % 10;   //used for DS1 AKA right 7 seg display
-     
+
+/*
      if (first == 0) {
         GPIOE_ODR = left7segdisplay[0];
      }
@@ -122,7 +122,7 @@ void TIMER1_ISR () iv IVT_INT_TIM1_UP {
         GPIOE_ODR = right7segdisplay[9];
      }
 
-
+ */
 }
 
 //**************************************************************************************************
@@ -196,7 +196,7 @@ void initializeGPIO(){
            GPIOC_CRH = 0x44444444; //SETS GPIOC HIGH as input
 
 
-<<<<<<< Updated upstream
+
            adcCONFIG();
 
 
@@ -237,8 +237,7 @@ void initializeGPIO(){
 
         }
 
-=======
->>>>>>> Stashed changes
+
 }
 
 
