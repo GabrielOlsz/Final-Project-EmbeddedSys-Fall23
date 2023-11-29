@@ -17,7 +17,7 @@ unsigned int down[11] = {'D','N',' ','P','R','E','S','S','E','D', ' '};
 unsigned int click[11] = {'C','K',' ','P','R','E','S','S','E','D', ' '};
 unsigned int unpause[9] = {'U','N','P','A','U','S','E','D',' '};
 unsigned int left7segdisplay[10] = {0XA000, 0XA100, 0XA400, 0XA500, 0XB000, 0XB100, 0XB400, 0XB500, 0XE000, 0XE100};
-unsigned int right7segdisplay[10] = {0XA000, 0XA100, 0XA400, 0XA500, 0XB000, 0XB100, 0XB400, 0XB500, 0XE000, 0XE100};
+unsigned int right7segdisplay[10] = {0XA800, 0XA900, 0XAC00, 0XAD00, 0XB800, 0XB900, 0XBC00, 0XBD00, 0XE800, 0XE900};
 unsigned int pauseToggle = 0;
 unsigned int i = 0;
 int counter = 0;
@@ -57,8 +57,8 @@ void TIMER1_ISR () iv IVT_INT_TIM1_UP {
      counter++;
      
      //split counter into two numbers, ex: 25 will split to 2 and 5
-     first = counter / 10;
-     second = counter % 10;
+     first = counter / 10;    //used for DS2 AKA left 7 seg display
+     second = counter % 10;   //used for DS1 AKA right 7 seg display
      
      if (first == 0) {
         GPIOE_ODR = left7segdisplay[0];
