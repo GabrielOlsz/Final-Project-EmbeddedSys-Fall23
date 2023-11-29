@@ -196,7 +196,7 @@ void initializeGPIO(){
            GPIOC_CRH = 0x44444444; //SETS GPIOC HIGH as input
 
 
-<<<<<<< Updated upstream
+
            adcCONFIG();
 
 
@@ -237,8 +237,7 @@ void initializeGPIO(){
 
         }
 
-=======
->>>>>>> Stashed changes
+
 }
 
 
