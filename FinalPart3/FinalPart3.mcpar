@@ -43,7 +43,8 @@ Count=0
 [Useses]
 Count=0
 [EXPANDED_NODES]
-Count=0
+0=FinalPart3.mcpar
+Count=1
 [LIB_EXPANDED_NODES]
 Count=1
 [PROGRAMMER_OPTIONS]
