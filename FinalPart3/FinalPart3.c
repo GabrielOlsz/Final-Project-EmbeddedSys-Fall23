@@ -48,7 +48,7 @@ void PinConfiguration();
 void TIMER3_ISR () iv IVT_INT_TIM3 {
   TIM3_SR.UIF = 0;               // Reset UIF flag so next interrupt can be recognized when UIF is set
  // GPIOD_ODR = ~GPIOD_ODR;        // Toggle PORTD LEDs
-//  GPIOE_ODR = ~GPIOE_ODR;        // Toggle PORTE LEDs
+  //GPIOE_ODR = ~GPIOE_ODR;        // Toggle PORTE LEDs
 }
 
 void TIMER1_ISR () iv IVT_INT_TIM1_UP {
@@ -57,9 +57,9 @@ void TIMER1_ISR () iv IVT_INT_TIM1_UP {
      counter++;
      
      //split counter into two numbers, ex: 25 will split to 2 and 5
-/*     first = counter / 10;
+     first = counter / 10;
      second = counter % 10;
-
+     
      if (first == 0) {
         GPIOE_ODR = left7segdisplay[0];
      }
@@ -122,24 +122,22 @@ void TIMER1_ISR () iv IVT_INT_TIM1_UP {
         GPIOE_ODR = right7segdisplay[9];
      }
 
- */
+
 }
 
 //**************************************************************************************************
 //MAIN FUNCTION
 void main() {
-           
-           PinConfiguration();
            initializeGPIO();            //Enable port clocks
            adcCONFIG();                 //Configure ADC read
            InitializeUSART1();          //Configure USART1
-           Timer1Configuration();
-           Timer3IntConfiguration();
 
         for(;;) {
 
                  GPIODConfigInput();            //Function to call GPIOD config input
                  Joystick();                    //Function for joystick
+                 Timer1Configuration();
+                 Timer3IntConfiguration();
                  GPIODConfigOutput();           //Function to call GPIOD config output
                  GPIOD_ODR = getAdcReading();   //Display ADC signal to GPIOD LEDS
                  delay_ms(100);
@@ -204,43 +202,9 @@ void initializeGPIO(){
 
 
         InitializeUSART1();                // Call sub function to initialize USART1
-
+ }
 
 //**************************************************************************************************
-//VARIABLE DECLARATIONS
-        for(;;) {
-
-                 GPIODConfigInput();            //Function to call GPIOD config input
-                 Joystick();                    //Function for joystick
-
-
-                GPIODConfigOutput();           //Function to call GPIOD config output
-                GPIOD_ODR = getAdcReading();   //Display ADC signal to GPIOD LEDS
-                delay_ms(100);
-
-
-                if(((USART1_SR & (1<<5))== 0x20)){
-                  if (pauseToggle == 0 && (USART1_DR == 'p' || USART1_DR == 'P')){
-                    i = 0;
-                    pauseToggle = 1;
-                  }
-
-                  else if(pauseToggle == 1 && (USART1_DR == 'p' || USART1_DR == 'P')){
-                    i = 2;
-                    pauseToggle = 0;
-
-                 }
-                for (i = i; i<9; i++){
-                    while(USART1_SR.TC == 0) {}
-                    USART1_DR = unpause[i];              //Prints out unpause
-                }
-
-                }
-
-        }
-
-
-}
 
 
 void InitializeUSART1(){ // Sub function which initializes the registers to enable USART1
@@ -429,10 +393,6 @@ void Timer3IntConfiguration(){
         TIM3_CR1 = 0x0001;          // Enable TIMER3
 }
 
-void PinConfiguration() {
-        GPIO_Digital_Output(&GPIOD_BASE, _GPIO_PINMASK_ALL);
-        GPIO_Digital_Output(&GPIOE_BASE, _GPIO_PINMASK_ALL);
-}
 
 
  //****************************************************************************************
