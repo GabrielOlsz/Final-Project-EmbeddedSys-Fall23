@@ -23,3 +23,5 @@ Debug
 *.h.ini
 *.cp
 *.mcl
+*.emcl
+*.bin
