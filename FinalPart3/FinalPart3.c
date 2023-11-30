@@ -53,13 +53,15 @@ void TIMER3_ISR () iv IVT_INT_TIM3 {
 
 void TIMER1_ISR () iv IVT_INT_TIM1_UP {
      TIM1_SR.UIF = 0;               //Reset UIF flag
-     GPIOE_ODR = ~GPIOE_ODR;
+//     GPIOE_ODR = ~GPIOE_ODR;
      counter++;
      
-     //split counter into two numbers, ex: 25 will split to 2 and 5
+     //split counter into two numbers, ex: 25 will split to 2 and 5 to display on either left or right display
      first = counter / 10;
      second = counter % 10;
-     
+
+
+//block of if statements with 'first' variable control left7segdisplay
      if (first == 0) {
         GPIOE_ODR = left7segdisplay[0];
      }
@@ -91,6 +93,7 @@ void TIMER1_ISR () iv IVT_INT_TIM1_UP {
         GPIOE_ODR = left7segdisplay[9];
      }
 
+//block of if statements with 'second' variable control right7segdisplay
      if (second == 0) {
         GPIOE_ODR = right7segdisplay[0];
      }
@@ -141,6 +144,8 @@ void main() {
                  GPIODConfigOutput();           //Function to call GPIOD config output
                  GPIOD_ODR = getAdcReading();   //Display ADC signal to GPIOD LEDS
                  delay_ms(100);
+
+
 
 
                  if(((USART1_SR & (1<<5))== 0x20)){
