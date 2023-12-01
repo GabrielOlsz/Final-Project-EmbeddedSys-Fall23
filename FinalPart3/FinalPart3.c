@@ -1,10 +1,11 @@
 //**************************************************************************************************
 // Name: Alexander Castromonte, Gabriel Olszewski, Anthony Mauro
-// Date: 11/20/2023
-// Course: ELEC3371-00
-// Description: This program initializes USART1. It waits to receive a character from USART
-//                                terminal tool in the development system and then it sends the same character
-//                                back. It uses baud rate of 56000. On SW12 set PA9 and PA10 to TX and RX.
+// Date: 12/4/2023
+// Course: ELEC3371-01
+// Description: This program uses timers and implements previous objectives with interrupts.
+//              On PORT E, the MET1155 is plugged in and will display a counter from 0 to 99. When
+//              q or Q is sent into USART, then the counter value will be displayed in the terminal
+//
 //**************************************************************************************************
 
 //**************************************************************************************************
@@ -21,8 +22,8 @@ unsigned int right7segdisplay[10] = {0XA800, 0XA900, 0XAC00, 0XAD00, 0XB800, 0XB
 unsigned int pauseToggle = 0;
 unsigned int i = 0;
 int counter = 0;
-int first;
-int second;
+int leftSide;
+int rightSide;
 
 //PD2 = LEFT , PD4 = UP, PB5 = DOWN, PA6 = RIGHT, PC13 = CENTER
 
@@ -44,89 +45,30 @@ void initializeGPIO();
 void PinConfiguration();
 
 //**************************************************************************************************
-//INTERRUPT SERVICE ROUTINE
+//INTERRUPT SERVICE ROUTINES
+
+//Objective 2 **************************************************************************************
+void TIMER1_ISR () iv IVT_INT_TIM1_UP {
+     TIM1_SR.UIF = 0;               //Reset UIF flag
+     counter++;
+
+     //split counter into two numbers, ex: 25 will split to 2 and 5 to display on either left or right display
+     leftSide = counter / 10;
+     rightSide = counter % 10;
+
+     if(counter >= 99){    //When counter reaches 99 seconds, reset to 0
+         counter = 0;
+     }
+}
+//**************************************************************************************************
+
 void TIMER3_ISR () iv IVT_INT_TIM3 {
   TIM3_SR.UIF = 0;               // Reset UIF flag so next interrupt can be recognized when UIF is set
  // GPIOD_ODR = ~GPIOD_ODR;        // Toggle PORTD LEDs
   //GPIOE_ODR = ~GPIOE_ODR;        // Toggle PORTE LEDs
 }
 
-void TIMER1_ISR () iv IVT_INT_TIM1_UP {
-     TIM1_SR.UIF = 0;               //Reset UIF flag
-//     GPIOE_ODR = ~GPIOE_ODR;
-     counter++;
-     
-     //split counter into two numbers, ex: 25 will split to 2 and 5 to display on either left or right display
-     first = counter / 10;
-     second = counter % 10;
 
-
-//block of if statements with 'first' variable control left7segdisplay
-     if (first == 0) {
-        GPIOE_ODR = left7segdisplay[0];
-     }
-     if (first == 1) {
-        GPIOE_ODR = left7segdisplay[1];
-     }
-     if (first == 2) {
-        GPIOE_ODR = left7segdisplay[2];
-     }
-     if (first == 3) {
-        GPIOE_ODR = left7segdisplay[3];
-     }
-     if (first == 4) {
-        GPIOE_ODR = left7segdisplay[4];
-     }
-     if (first == 5) {
-        GPIOE_ODR = left7segdisplay[5];
-     }
-     if (first == 6) {
-        GPIOE_ODR = left7segdisplay[6];
-     }
-     if (first == 7) {
-        GPIOE_ODR = left7segdisplay[7];
-     }
-     if (first == 8) {
-        GPIOE_ODR = left7segdisplay[8];
-     }
-     if (first == 9) {
-        GPIOE_ODR = left7segdisplay[9];
-     }
-
-//block of if statements with 'second' variable control right7segdisplay
-     if (second == 0) {
-        GPIOE_ODR = right7segdisplay[0];
-     }
-     if (second == 1) {
-        GPIOE_ODR = right7segdisplay[1];
-     }
-     if (second == 2) {
-        GPIOE_ODR = right7segdisplay[2];
-     }
-     if (second == 3) {
-        GPIOE_ODR = right7segdisplay[3];
-     }
-     if (second == 4) {
-        GPIOE_ODR = right7segdisplay[4];
-     }
-     if (second == 5) {
-        GPIOE_ODR = right7segdisplay[5];
-     }
-     if (second == 6) {
-        GPIOE_ODR = right7segdisplay[6];
-     }
-     if (second == 7) {
-        GPIOE_ODR = right7segdisplay[7];
-     }
-     if (second == 8) {
-        GPIOE_ODR = right7segdisplay[8];
-     }
-     if (second == 9) {
-        GPIOE_ODR = right7segdisplay[9];
-     }
-
-
-}
 
 //**************************************************************************************************
 //MAIN FUNCTION
@@ -134,41 +76,46 @@ void main() {
            initializeGPIO();            //Enable port clocks
            adcCONFIG();                 //Configure ADC read
            InitializeUSART1();          //Configure USART1
+           Timer1Configuration();
+           Timer3IntConfiguration();
 
         for(;;) {
 
                  GPIODConfigInput();            //Function to call GPIOD config input
                  Joystick();                    //Function for joystick
-                 Timer1Configuration();
-                 Timer3IntConfiguration();
                  GPIODConfigOutput();           //Function to call GPIOD config output
-                 GPIOD_ODR = getAdcReading();   //Display ADC signal to GPIOD LEDS
-                 delay_ms(100);
+                 GPIOD_ODR = getAdcReading();   //Display ADC signal to GPIOD LEDS thats a value from 1 to 100
+
+                 //Objective 2*****************************************************
+                 GPIOE_ODR = left7segdisplay[leftSide];  //Use values from TIMER1 Function above to display onto 7 segment with an array
+                 delay_ms(5);                         //Small delay so eyes cannot tell the display is refreshing, if there is no delay then the display gets dim
+                 GPIOE_ODR = right7segdisplay[rightSide];
+                 delay_ms(5);
 
 
+                 if(((USART1_SR & (1<<5))== 0x20)){           //Wait for USART to receive
+                  if(USART1_DR == 'q' || USART1_DR == 'Q'){   //If user sends q or Q to USART then receive the counter value
+                     USART1_DR = counter;                     //USART Terminal Data format must be set to "DEC" the decimal value
 
-
-                 if(((USART1_SR & (1<<5))== 0x20)){
-                  if(USART1_DR == 'q' || USART1_DR == 'Q'){
-                     USART1_DR = counter;
                   }
                  }
+                 //****************************************************************
 
-                if(((USART1_SR & (1<<5))== 0x20)){
 
-                  if (pauseToggle == 0 && (USART1_DR == 'p' || USART1_DR == 'P')){
-                    i = 0;
+                if(((USART1_SR & (1<<5))== 0x20)){           //Wait for USART to receive
+                  if (pauseToggle == 0 && (USART1_DR == 'p' || USART1_DR == 'P')){      //If user sends p or P to USART then receive "UNPAUSED"
+                    i = 0;                                                              //USART Terminal must be set ASCII data format
                     pauseToggle = 1;
                   }
 
-                  else if(pauseToggle == 1 && (USART1_DR == 'p' || USART1_DR == 'P')){
+                  else if(pauseToggle == 1 && (USART1_DR == 'p' || USART1_DR == 'P')){  //If user sends p or P to USART then receive "PAUSED"
                     i = 2;
                     pauseToggle = 0;
 
                  }
                   for (i = i; i<9; i++){
                       while(USART1_SR.TC == 0) {}
-                      USART1_DR = unpause[i];              //Prints out unpause
+                      USART1_DR = unpause[i];              //Prints out unpause/pause in USART
                   }
 
                 }
@@ -200,13 +147,8 @@ void initializeGPIO(){
            GPIOC_CRL = 0x44444444; //SETS GPIOC LOW as input
            GPIOC_CRH = 0x44444444; //SETS GPIOC HIGH as input
 
-
-
            adcCONFIG();
-
-
-
-        InitializeUSART1();                // Call sub function to initialize USART1
+           InitializeUSART1();                // Call sub function to initialize USART1
  }
 
 //**************************************************************************************************
@@ -289,9 +231,6 @@ void Joystick() {
           }
 
 
-
-
-
           if(GPIOD_IDR.B2 == 1 & pd2state == 0){         //Function for Left button
                           GPIOE_ODR = 0;
                           pd2state = 1;
@@ -305,10 +244,6 @@ void Joystick() {
                    }
                           pd2state = 0;
           }
-
-
-
-
 
 
           if(GPIOD_IDR.B4 == 1 & pd4state == 0){         //Function for UP button
