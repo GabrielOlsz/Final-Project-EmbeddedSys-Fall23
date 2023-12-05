@@ -5,8 +5,10 @@
 // Description: This program uses timers and implements previous objectives with interrupts.
 //              On PORT E, the MET1155 is plugged in and will display a counter from 0 to 99. When
 //              q or Q is sent into USART, then the counter value will be displayed in the terminal
-//
-//**************************************************************************************************
+//              Objective 3: Timer 3's Speed can be controlled with the potentiometer and the LED
+//              PE14 on PORTE along with the buzzer will change flashing/sound speed.
+//              Objective 4: The Joystick code to trigger up, down, left, and right has been
+//              rewritten on an interrupt basis.
 
 //**************************************************************************************************
 //VARIABLE/FUNCTION DECLARATIONS
@@ -24,14 +26,12 @@ unsigned int i = 0;
 int counter = 0;
 int leftSide;
 int rightSide;
-
-//PD2 = LEFT , PD4 = UP, PB5 = DOWN, PA6 = RIGHT, PC13 = CENTER
-
 unsigned long int pa6state = 0;
 unsigned long int pd2state = 0;
 unsigned long int pd4state = 0;
 unsigned long int pb5state = 0;
 unsigned long int pc13state = 0;
+unsigned long int JoyStickDir = 0;
 
 void GPIODConfigOutput();
 void adcCONFIG();
@@ -42,7 +42,7 @@ void InitializeUSART1();        // Sub function which initializes the registers 
 void Timer1Configuration();
 void Timer3IntConfiguration();
 void initializeGPIO();
-void PinConfiguration();
+void JoyStickConfiguration();
 
 //**************************************************************************************************
 //INTERRUPT SERVICE ROUTINES
@@ -60,47 +60,116 @@ void TIMER1_ISR () iv IVT_INT_TIM1_UP {
          counter = 0;
      }
 }
-//**************************************************************************************************
+//Objective 3**************************************************************************************************
 
 void TIMER3_ISR () iv IVT_INT_TIM3 {
   TIM3_SR.UIF = 0;               // Reset UIF flag so next interrupt can be recognized when UIF is set
- // GPIOD_ODR = ~GPIOD_ODR;        // Toggle PORTD LEDs
-  //GPIOE_ODR = ~GPIOE_ODR;        // Toggle PORTE LEDs
+  GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER! ALSO TOGGLES LIGHT PE14 based on TIMER SPEED with potentiometer
+
+}
+//**************************************************************************************************
+
+//Objective 4*****************************************************************************************
+
+void JoyStickLeft() iv IVT_INT_EXTI2 {
+  EXTI_PR.B2 = 1;
+  JoyStickDir = 2;
 }
 
+void JoyStickUp() iv IVT_INT_EXTI4 {
+    EXTI_PR.B4 = 1;
+    JoyStickDir = 4;
+}
+
+void JoyStickRightAndDown() iv IVT_INT_EXTI9_5{
+
+if((EXTI_PR & 0x0020) == 0x0020){
+    EXTI_PR.B5 = 1;
+
+  JoyStickDir = 5;
+ }
+if((EXTI_PR & 0x0040) == 0x0040){
+    EXTI_PR.B6 = 1;
+    JoyStickDir = 6;
+    }
+}
+
+//void JoyStickClick() iv IVT_INT_EXTI15_10{
+//EXTI_PR.B13 = 1;
+//JoyStickDir = 13;
+//
+//}
 
 
-//**************************************************************************************************
+//*****************************************************************************************************
+
 //MAIN FUNCTION
 void main() {
            initializeGPIO();            //Enable port clocks
            adcCONFIG();                 //Configure ADC read
            InitializeUSART1();          //Configure USART1
            Timer1Configuration();
-           Timer3IntConfiguration();
+           JoystickConfiguration();
 
         for(;;) {
-
-                 GPIODConfigInput();            //Function to call GPIOD config input
-                 Joystick();                    //Function for joystick
-                 GPIODConfigOutput();           //Function to call GPIOD config output
-                 GPIOD_ODR = getAdcReading();   //Display ADC signal to GPIOD LEDS thats a value from 1 to 100
-
+        
+                 Timer3IntConfiguration();
                  //Objective 2*****************************************************
-                 GPIOE_ODR = left7segdisplay[leftSide];  //Use values from TIMER1 Function above to display onto 7 segment with an array
-                 delay_ms(5);                         //Small delay so eyes cannot tell the display is refreshing, if there is no delay then the display gets dim
-                 GPIOE_ODR = right7segdisplay[rightSide];
-                 delay_ms(5);
-
-
-                 if(((USART1_SR & (1<<5))== 0x20)){           //Wait for USART to receive
-                  if(USART1_DR == 'q' || USART1_DR == 'Q'){   //If user sends q or Q to USART then receive the counter value
-                     USART1_DR = counter;                     //USART Terminal Data format must be set to "DEC" the decimal value
-
-                  }
-                 }
+                 GPIOD_ODR = left7segdisplay[leftSide];  //Use values from TIMER1 Function above to display onto 7 segment with an array
+                 delay_ms(1);                         //Small delay so eyes cannot tell the display is refreshing, if there is no delay then the display gets dim
+                 GPIOD_ODR = right7segdisplay[rightSide];
+                 delay_ms(1);
                  //****************************************************************
 
+                //Objective 4 *****************************************************
+                switch(JoyStickDir){
+                     case 2:
+                          for (i = 0; i<11; i++){
+                         while(USART1_SR.TC == 0) {}
+                         USART1_DR = left[i];
+
+                         }
+                           JoyStickDir = 0;
+                     break;
+
+                     case 4:
+                     for (i = 0; i<11; i++){
+                     while(USART1_SR.TC == 0) {}
+                     USART1_DR = up[i];
+                     }
+                          JoyStickDir = 0;
+                     break;
+
+                     case 5:
+                          for (i = 0; i<11; i++){
+                         while(USART1_SR.TC == 0) {}
+                         USART1_DR = down[i];
+                         }
+                          JoyStickDir = 0;
+                     break;
+
+                     case 6:
+                          for (i = 0; i<11; i++){
+                           while(USART1_SR.TC == 0) {}
+                           USART1_DR = right[i];
+                           }
+                           JoyStickDir = 0;
+                     break;
+
+//                     case 13:
+//                          for (i = 0; i<11; i++){
+//                       while(USART1_SR.TC == 0) {}
+//                       USART1_DR = click[i];
+//                       }
+//                       JoyStickDir = 0;
+//                     break;
+
+                     default:
+                     JoyStickDir = 0;
+                     break;
+
+                }
+                //****************************************************************
 
                 if(((USART1_SR & (1<<5))== 0x20)){           //Wait for USART to receive
                   if (pauseToggle == 0 && (USART1_DR == 'p' || USART1_DR == 'P')){      //If user sends p or P to USART then receive "UNPAUSED"
@@ -112,6 +181,8 @@ void main() {
                     i = 2;
                     pauseToggle = 0;
 
+                 } else if(USART1_DR == 'q' || USART1_DR == 'Q'){      //Objective 2
+                         USART1_DR = counter;
                  }
                   for (i = i; i<9; i++){
                       while(USART1_SR.TC == 0) {}
@@ -119,6 +190,9 @@ void main() {
                   }
 
                 }
+
+
+
 
         }
 
@@ -147,6 +221,10 @@ void initializeGPIO(){
            GPIOC_CRL = 0x44444444; //SETS GPIOC LOW as input
            GPIOC_CRH = 0x44444444; //SETS GPIOC HIGH as input
 
+           GPIOD_CRL = 0x44444444; //SETS GPIOD LOW as input
+           GPIOD_CRH = 0x33333333; //SETS GPIOD HIGH as input
+           GPIOD_ODR = 0;
+
            adcCONFIG();
            InitializeUSART1();                // Call sub function to initialize USART1
  }
@@ -163,16 +241,11 @@ void InitializeUSART1(){ // Sub function which initializes the registers to enab
         GPIOA_CRH |= (0x04 << 8);         // USART1 Rx (PA10) input floating
         RCC_APB2ENR |= 1<<14;             // enable clock for USART1
         USART1_BRR=0X00000506;            // Set baud rate to 56000
-        // Per data sheet (pg. 1010) USART1_CR1 consists of the following:
-        //13 12   11  10  9    8     7    6      5      4  3  2   1   0
-        //UE  M WAKE PCE PS PEIE TXEIE TCIE RXNEIE IDLEIE TE RE RWU SBK
-        //rw rw  rw   rw rw   rw    rw   rw     rw     rw rw rw  rw  rw
         USART1_CR1 &= ~(1<<12);          // Force 8 data bits. M bit is set to 0.
         USART1_CR2 &= ~(3<<12);          // Force 1 stop bit
         USART1_CR3 &= ~(3<<8);           // Force no flow control and no DMA for USART1
         USART1_CR1 &= ~(3<<9);           // Force no parity and no parity control
         USART1_CR1 |= 3<<2;              // RX, TX enable
-        //The following two instructions can also be used to enable RX and TX manually
         //USART1_CR1.TE=1; //TX enable
         //USART1_CR1.RE=1; //RX enable
         USART1_CR1 |= 1<<13;            // USART1 enable. This is done after configuration is complete
@@ -183,6 +256,7 @@ void InitializeUSART1(){ // Sub function which initializes the registers to enab
 
 
 //**************************************************************************************************
+
 void Joystick() {
           if(GPIOA_IDR.B6 == 1 & pa6state == 0){        //Function for RIGHT button
                           GPIOE_ODR = 0;
@@ -262,6 +336,7 @@ void Joystick() {
 
 }
 
+
 //**************************************************************************************************
 void GPIODConfigInput(){
 
@@ -311,18 +386,19 @@ void Timer1Configuration(){
         TIM1_DIER.UIE = 1;     // Update interrupt enable
         TIM1_CR1 = 0x0001;         // Enable TIMER1
 
-// Notice: Bit 4 of TIM1_CR1 specifies whether the counter count up (BIT4=0) or counts down (BIT4=1)
-// In this configuration this counting up is used.
 }
-
+//Objective 3************************************************************************************************************
 void Timer3IntConfiguration(){
         RCC_APB1ENR |= (1 << 1);// Enable TIMER3 clock. RCC: Clock Configuration Register
         TIM3_CR1 = 0x0000;          // Disable timer until configuration is complete
                                                         // If reset value of RCC_CFGR is used, then the 8MHz clock will
                                                         // be the clock source for timer
-        TIM3_PSC = 7999;            // Clock to TIMx_CNT = 72000000 (clock applied to prescaler register) /
+        TIM3_PSC = getAdcReading() * 5;            // Clock to TIMx_CNT = 72000000 (clock applied to prescaler register) /
+
+
+
                                                         //                     7999 (Value in TIMx_PSC) + 1) = 9000
-        TIM3_ARR = 9000;                // Reload timer count register with this value when count register resets
+        TIM3_ARR = (72000000)/((getAdcReading()*5)+1);                // Reload timer count register with this value when count register resets
                                                         // to 0 after counting from zero to this value
         NVIC_ISER0.B29 = 1;        // Enable global interrupt for TIMER3 in NVIC
                                                         // Interrupt set enable register 0. Position of this interrupt in vector
@@ -336,3 +412,32 @@ void Timer3IntConfiguration(){
 
 
  //****************************************************************************************
+ //Objective 4*****************************************************************************
+ void JoyStickConfiguration(){
+ GPIOA_CRL = 0x4000000;
+ GPIOB_CRL =  0x400000;
+// GPIOC_CRH =  0x40000;
+ GPIOD_CRL =  0x40400;
+
+  RCC_APB2ENR.IOPBEN = 1;
+  RCC_APB2ENR.IOPAEN = 1;
+  RCC_APB2ENR.IOPDEN = 1;
+ // RCC_APB2ENR.IOPCEN = 1;
+  RCC_APB2ENR.AFIOEN = 1; // Enable clock for alternate pin function
+  AFIO_EXTICR1 = 0x0300; // PD2 as External interrupt
+  AFIO_EXTICR2 = 0x0013; // PB6 as External interrupt
+  AFIO_EXTICR4 = 0x2000; // PC13 as External interrupt
+  //EXTI_RTSR = 0x0074;    // rising edge
+  EXTI_FTSR =0x0074; // Set interrupt on falling edge for PA0 and PB6
+  EXTI_IMR |= 0x0074; // Interrupt on PA0 and PB6 are non-maskable
+//  NVIC_ISER0 |= 1<< 8; //Enable NVIC interrupt for EXTI2  PD2
+//  NVIC_ISER0 |= 1<< 10; //Enable NVIC interrupt for EXTI4 PD4
+//  NVIC_ISER0 |= 1<<23; // Enable NVIC interrupt for EXTI9_% (PB6 & PA5)
+//  NVIC_ISER0 |= 1<< 40; //Enable NVIC interrupt for EXTI5_10 (PC13)
+  NVIC_ISER0.B8 = 1;
+  NVIC_ISER0.B10 = 1;
+  NVIC_ISER0.B23 = 1;
+
+}
+
+ //******************************************************************************************
