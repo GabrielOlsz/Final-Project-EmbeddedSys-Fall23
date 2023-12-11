@@ -11,44 +11,11 @@
 //**************************************************************************************************
 //VARIABLE/FUNCTION DECLARATIONS
 #include "PacmanFinalPart4_objects.h"
+#include "PacmanFinalPart4_resources.h" //Has all of the interrupt service routines for the Joystick buttons to work
+#include "PacmanScreens.h"
 
-//VARIABLE/FUNCTION DECLARATIONS
-unsigned int rcvrd;                        // Container for received data
-unsigned int right[11] = {'R','T',' ','P','R','E','S','S','E','D', ' '};
-unsigned int left[11] = {'L','T',' ','P','R','E','S','S','E','D', ' '};
-unsigned int up[11] = {'U','P',' ','P','R','E','S','S','E','D', ' '};
-unsigned int down[11] = {'D','N',' ','P','R','E','S','S','E','D', ' '};
-unsigned int click[11] = {'C','K',' ','P','R','E','S','S','E','D', ' '};
-unsigned int unpause[9] = {'U','N','P','A','U','S','E','D',' '};
-unsigned int left7segdisplay[10] = {0XA000, 0XA100, 0XA400, 0XA500, 0XB000, 0XB100, 0XB400, 0XB500, 0XE000, 0XE100};
-unsigned int right7segdisplay[10] = {0XA800, 0XA900, 0XAC00, 0XAD00, 0XB800, 0XB900, 0XBC00, 0XBD00, 0XE800, 0XE900};
-unsigned int pauseToggle = 0;
-unsigned int i = 0;
-int counter = 0;
-int leftSide;
-int rightSide;
-unsigned long int pa6state = 0;
-unsigned long int pd2state = 0;
-unsigned long int pd4state = 0;
-unsigned long int pb5state = 0;
-unsigned long int pc13state = 0;
-unsigned long int JoyStickDir = 0;
 
-void GPIODConfigOutput();
-void adcCONFIG();
-void Joystick();
-void GPIODConfigInput();
-unsigned int getAdcReading();
-void InitializeUSART1();        // Sub function which initializes the registers to enable USART1
-void Timer1Configuration();
-void Timer3IntConfiguration();
-void initializeGPIO();
-void JoyStickConfiguration();
-
-//**************************************************************************************************
 //INTERRUPT SERVICE ROUTINES
-
-//Objective 2 **************************************************************************************
 void TIMER1_ISR () iv IVT_INT_TIM1_UP {
      TIM1_SR.UIF = 0;               //Reset UIF flag
      counter++;
@@ -61,16 +28,12 @@ void TIMER1_ISR () iv IVT_INT_TIM1_UP {
          counter = 0;
      }
 }
-//Objective 3**************************************************************************************************
 
 void TIMER3_ISR () iv IVT_INT_TIM3 {
   TIM3_SR.UIF = 0;               // Reset UIF flag so next interrupt can be recognized when UIF is set
   GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER! ALSO TOGGLES LIGHT PE14 based on TIMER SPEED with potentiometer
 
 }
-//**************************************************************************************************
-
-//Objective 4*****************************************************************************************
 
 void JoyStickLeft() iv IVT_INT_EXTI2 {
   EXTI_PR.B2 = 1;
@@ -102,27 +65,47 @@ if((EXTI_PR & 0x0040) == 0x0040){
 //}
 
 
-//*****************************************************************************************************
 
 //MAIN FUNCTION
 void main() {
-           initializeGPIO();            //Enable port clocks
-           adcCONFIG();                 //Configure ADC read
-           InitializeUSART1();          //Configure USART1
-           Timer1Configuration();
-           JoystickConfiguration();
+         initializeGPIO();            //Enable port clocks
+         adcCONFIG();                 //Configure ADC read
+         InitializeUSART1();          //Configure USART1
+         Timer1Configuration();
+         JoystickConfiguration();
+         Start_TP();
+         ClearScreen();
+         RCC_APB2ENR.IOPEEN = 1;
+//         Check_TP();
 
         for(;;) {
 
+
+                 switch(ScreenStateMachine){
+                  case 0:
+                  TitleScreen();
+                  break;
+                  case 1:
+                  PlayScreen();
+                  GameOverScreen();
+                  break;
+                  case 2:
+                  HighScoreScreen();
+                  case 3:
+                  HowtoScreen();
+
+
+
+
                  Timer3IntConfiguration();
-                 //Objective 2*****************************************************
+                 //MET1155********************************************************
                  GPIOD_ODR = left7segdisplay[leftSide];  //Use values from TIMER1 Function above to display onto 7 segment with an array
                  delay_ms(1);                         //Small delay so eyes cannot tell the display is refreshing, if there is no delay then the display gets dim
                  GPIOD_ODR = right7segdisplay[rightSide];
                  delay_ms(1);
                  //****************************************************************
 
-                //Objective 4 *****************************************************
+
                 switch(JoyStickDir){
                      case 2:
                           for (i = 0; i<11; i++){
@@ -200,6 +183,56 @@ void main() {
 }
 
 
+
+
+
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+
+
+
+
+
+ void JoyStickConfiguration(){
+ GPIOA_CRL = 0x4000000;
+ GPIOB_CRL =  0x400000;
+// GPIOC_CRH =  0x40000;
+ GPIOD_CRL =  0x40400;
+
+  RCC_APB2ENR.IOPBEN = 1;
+  RCC_APB2ENR.IOPAEN = 1;
+  RCC_APB2ENR.IOPDEN = 1;
+ // RCC_APB2ENR.IOPCEN = 1;
+  RCC_APB2ENR.AFIOEN = 1; // Enable clock for alternate pin function
+  AFIO_EXTICR1 = 0x0300; // PD2 as External interrupt
+  AFIO_EXTICR2 = 0x0013; // PB6 as External interrupt
+  AFIO_EXTICR4 = 0x2000; // PC13 as External interrupt
+  //EXTI_RTSR = 0x0074;    // rising edge
+  EXTI_FTSR =0x0074; // Set interrupt on falling edge for PA0 and PB6
+  EXTI_IMR |= 0x0074; // Interrupt on PA0 and PB6 are non-maskable
+//  NVIC_ISER0 |= 1<< 8; //Enable NVIC interrupt for EXTI2  PD2
+//  NVIC_ISER0 |= 1<< 10; //Enable NVIC interrupt for EXTI4 PD4
+//  NVIC_ISER0 |= 1<<23; // Enable NVIC interrupt for EXTI9_% (PB6 & PA5)
+//  NVIC_ISER0 |= 1<< 40; //Enable NVIC interrupt for EXTI5_10 (PC13)
+  NVIC_ISER0.B8 = 1;
+  NVIC_ISER0.B10 = 1;
+  NVIC_ISER0.B23 = 1;
+
+}
+
 //**************************************************************************************************
 //SUB FUNCTIONS
 
@@ -257,6 +290,8 @@ void InitializeUSART1(){ // Sub function which initializes the registers to enab
 
 
 //**************************************************************************************************
+
+
 
 void Joystick() {
           if(GPIOA_IDR.B6 == 1 & pa6state == 0){        //Function for RIGHT button
@@ -413,32 +448,3 @@ void Timer3IntConfiguration(){
 
 
  //****************************************************************************************
- //Objective 4*****************************************************************************
- void JoyStickConfiguration(){
- GPIOA_CRL = 0x4000000;
- GPIOB_CRL =  0x400000;
-// GPIOC_CRH =  0x40000;
- GPIOD_CRL =  0x40400;
-
-  RCC_APB2ENR.IOPBEN = 1;
-  RCC_APB2ENR.IOPAEN = 1;
-  RCC_APB2ENR.IOPDEN = 1;
- // RCC_APB2ENR.IOPCEN = 1;
-  RCC_APB2ENR.AFIOEN = 1; // Enable clock for alternate pin function
-  AFIO_EXTICR1 = 0x0300; // PD2 as External interrupt
-  AFIO_EXTICR2 = 0x0013; // PB6 as External interrupt
-  AFIO_EXTICR4 = 0x2000; // PC13 as External interrupt
-  //EXTI_RTSR = 0x0074;    // rising edge
-  EXTI_FTSR =0x0074; // Set interrupt on falling edge for PA0 and PB6
-  EXTI_IMR |= 0x0074; // Interrupt on PA0 and PB6 are non-maskable
-//  NVIC_ISER0 |= 1<< 8; //Enable NVIC interrupt for EXTI2  PD2
-//  NVIC_ISER0 |= 1<< 10; //Enable NVIC interrupt for EXTI4 PD4
-//  NVIC_ISER0 |= 1<<23; // Enable NVIC interrupt for EXTI9_% (PB6 & PA5)
-//  NVIC_ISER0 |= 1<< 40; //Enable NVIC interrupt for EXTI5_10 (PC13)
-  NVIC_ISER0.B8 = 1;
-  NVIC_ISER0.B10 = 1;
-  NVIC_ISER0.B23 = 1;
-
-}
-
- //******************************************************************************************

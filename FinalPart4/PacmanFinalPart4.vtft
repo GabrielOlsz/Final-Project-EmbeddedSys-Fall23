@@ -197,7 +197,7 @@ void Write_Data(unsigned int _data) {
 }
 WRITE_DATA_CODE_END
 
-EXT_MEM_TYPE=MMC
+EXT_MEM_TYPE=
 EXT_MEM_DECL_CODE_START
 // MMC/SD Connections
 sbit Mmc_Chip_Select           at GPIOD_ODR.B3;
