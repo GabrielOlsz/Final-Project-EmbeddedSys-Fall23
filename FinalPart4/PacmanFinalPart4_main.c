@@ -14,6 +14,8 @@
 #include "PacmanFinalPart4_resources.h" //Has all of the interrupt service routines for the Joystick buttons to work
 #include "PacmanScreens.h"
 
+unsigned long int gameTick = 0;
+
 
 //INTERRUPT SERVICE ROUTINES
 void TIMER1_ISR () iv IVT_INT_TIM1_UP {
@@ -32,7 +34,7 @@ void TIMER1_ISR () iv IVT_INT_TIM1_UP {
 void TIMER3_ISR () iv IVT_INT_TIM3 {
   TIM3_SR.UIF = 0;               // Reset UIF flag so next interrupt can be recognized when UIF is set
   GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER! ALSO TOGGLES LIGHT PE14 based on TIMER SPEED with potentiometer
-
+  gameTick = 1;
 }
 
 void JoyStickLeft() iv IVT_INT_EXTI2 {
@@ -66,6 +68,74 @@ if((EXTI_PR & 0x0040) == 0x0040){
 
 
 
+void PlayScreen(){
+
+   if(JoystickDir == 0){ //default, only happens once
+     player.x0 = 160;
+     player.x1 = 160 + ENTITY_SIZE;
+     player.y0 = 150;
+     player.y1 = 150 + ENTITY_SIZE;
+     player.color = CL_YELLOW;
+     TFT_SET_BRUSH(1, player.color, 0,0,0,0);
+     TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
+   }
+   else{
+     TFT_SET_BRUSH(1, CL_BLACK, 0,0,0,0);
+     TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
+     switch(JoystickDir){
+     case 2: //LEFT
+     //Check if player has collided with anything
+     if(player.x0 > 1){ //1 is the size of the border around the Screen that it is detected collision for
+    //Move the player
+     player.x0 -= ENTITY_SIZE;
+     player.x1 -= ENTITY_SIZE;
+     }
+     else{} //Collides with left edge of the screen
+     
+     break;
+
+     case 4: //UP
+     //Check if player has collided with anything
+     //Move the player
+     player.y0 -= ENTITY_SIZE;
+     player.y0 -= ENTITY_SIZE;
+     break;
+
+     case 5: //DOWN
+     //Check if player has collided with anything
+     //Move the player
+     player.y0 += ENTITY_SIZE;
+     player.y1 += ENTITY_SIZE;
+     break;
+
+     case 6: //RIGHT
+     //Check if player has collided with anything
+     //Move the player
+     player.x0 += ENTITY_SIZE;
+     player.x1 += ENTITY_SIZE;
+     break;
+     
+     default:
+     break;
+     }
+
+     TFT_SET_BRUSH(1, player.color, 0,0,0,0);
+     TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
+    
+     //if player has collided with any of the food
+     //if yes, check if food is visibile, if yes, increase score, set visibility to 0
+     //loop through all the possible food positions, compare to player position
+     
+     
+     //if player has collided with a ghost
+     //if yes, end the game
+     //loop through all the possible ghost positions, compare to player position
+    
+     while(gameTick == 0){};
+     gameTick = 0;
+     }
+ }
+
 //MAIN FUNCTION
 void main() {
          initializeGPIO();            //Enable port clocks
@@ -80,11 +150,8 @@ void main() {
 
         for(;;) {
 
-
+                /*
                  switch(ScreenStateMachine){
-                  case 0:
-                  TitleScreen();
-                  break;
                   case 1:
                   PlayScreen();
                   GameOverScreen();
@@ -93,7 +160,12 @@ void main() {
                   HighScoreScreen();
                   case 3:
                   HowtoScreen();
-
+                  break;
+                  
+                  default:
+                  TitleScreen();
+                  break;
+                 }  */
 
 
 

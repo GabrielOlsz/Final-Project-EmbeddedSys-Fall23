@@ -13,23 +13,27 @@ void Timer3IntConfiguration();
 void initializeGPIO();
 
 
+
  struct EntityProperties{
         int x0;
         int x1;
         int y0;
         int y1;
         int color;
+        int isVisible;
  };
 
- struct EntityProperties players;
+ struct EntityProperties player;
  struct EntityProperties ghosts[4];
  struct EntityProperties food[200];
- 
+
  #define ENTITY_SIZE 20
  #define BORDER_X 320
  #define BORDER_Y 240
  #define FOOD_SIZE 4
  #define FOOD_BIG_SIZE 7
+
+
 
 
 unsigned int right[11] = {'R','T',' ','P','R','E','S','S','E','D', ' '};

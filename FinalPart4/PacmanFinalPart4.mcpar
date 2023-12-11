@@ -39,12 +39,11 @@ ActiveImageIndex=-1
 File0=PacmanFinalPart4_main.c
 File1=PacmanFinalPart4_events_code.c
 File2=PacmanFinalPart4_driver.c
-File3=PacmanFinalPart4_resources.c
-File4=PacmanFinalPart4_resources.h
-File5=PacmanFinalPart4_objects.h
-File6=PacmanScreens.c
-File7=PacmanScreens.h
-Count=8
+File3=PacmanFinalPart4_resources.h
+File4=PacmanFinalPart4_objects.h
+File5=PacmanScreens.c
+File6=PacmanScreens.h
+Count=7
 [EEPROM]
 Count=0
 [ACTIVE_COMMENTS_FILES]

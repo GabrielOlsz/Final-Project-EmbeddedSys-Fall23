@@ -1,16 +1,4 @@
 
-void PlayScreen(){
-   player.x0 = 160;
-   player.x1 = 160 + ENTITY_SIZE;
-   player.y0 = 150;
-   player.y1 = 150 + ENTITY_SIZE;
-   player.color = CL_YELLOW;
-   
-   TFT_SET_BRUSH(1, player.color, 0,0,0,0);
-   TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
-   
-
- }
 
 void GameOverScreen(){
 
