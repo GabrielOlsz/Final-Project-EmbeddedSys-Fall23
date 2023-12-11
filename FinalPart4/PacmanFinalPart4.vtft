@@ -1,0 +1,266 @@
+object Screen1: TMeDiagram
+  NettoExportOffset = 3
+  AutomaticNodes = False
+  AutoScroll = True
+  AutoPage = False
+  Background.Scroll = True
+  Background.Style = biTile
+  Background.Visible = False
+  Background.Gradient.Direction = grTopBottom
+  Background.Gradient.StartColor = clWhite
+  Background.Gradient.EndColor = clYellow
+  Background.Gradient.Visible = False
+  Background.PrintGradient = False
+  SnapGrid.Active = False
+  SnapGrid.Force = False
+  SnapGrid.Visible = False
+  SnapGrid.SizeX = 8.000000000000000000
+  SnapGrid.SizeY = 8.000000000000000000
+  SnapGrid.Style = gsLines
+  SnapGrid.SnapToRuler = False
+  ShowLinkPoints = False
+  LeftRuler.Visible = False
+  LeftRuler.Divisions = 10
+  LeftRuler.Font.Charset = DEFAULT_CHARSET
+  LeftRuler.Font.Color = clWindowText
+  LeftRuler.Font.Height = -9
+  LeftRuler.Font.Name = 'Arial'
+  LeftRuler.Font.Style = []
+  LeftRuler.Units = unPixel
+  LeftRuler.MinorTickLength = 4
+  LeftRuler.MajorTickLength = 6
+  LeftRuler.Color = clWhite
+  LeftRuler.TickColor = clBlack
+  LeftRuler.Size = 16
+  LeftRuler.AutoFactor = True
+  LeftRuler.GridColor = clBlack
+  TopRuler.Visible = False
+  TopRuler.Divisions = 10
+  TopRuler.Font.Charset = DEFAULT_CHARSET
+  TopRuler.Font.Color = clWindowText
+  TopRuler.Font.Height = -9
+  TopRuler.Font.Name = 'Arial'
+  TopRuler.Font.Style = []
+  TopRuler.Units = unPixel
+  TopRuler.MinorTickLength = 4
+  TopRuler.MajorTickLength = 6
+  TopRuler.Color = clWhite
+  TopRuler.TickColor = clBlack
+  TopRuler.Size = 16
+  TopRuler.AutoFactor = True
+  TopRuler.GridColor = clBlack
+  Zoom = 100
+  BorderColor = clGray
+  MouseWheelMode = mwOff
+  Layers = <
+    item
+      LayerName = 'Layer0'
+    end>
+  LinkCursor = crHandPoint
+  PanCursor = crHandPoint
+  ZoomCursor = crDefault
+  IgnoreScreenDPI = False
+  ShowCrossIndicators = False
+  PageLines.Visible = False
+  PageLines.Pen.Style = psDot
+  KeyActions = [kaEscape, kaMove, kaPage, kaResize, kaSelect]
+  HandlesStyle = hsVisio
+  SmoothMode = smAntiAlias
+  TextRenderingMode = tmAntiAlias
+  SelectionMode = slmMultiple
+  CanMoveOutOfBounds = False
+  PageSettings.PaperName = '320x240'
+  PageSettings.PaperId = 1
+  PageSettings.PaperWidth = 84.666666666666680000
+  PageSettings.PaperHeight = 63.500000000000000000
+  PageSettings.Orientation = dpoLandscape
+  PageSettings.LeftMarginStr = '25.4'
+  PageSettings.TopMarginStr = '25.4'
+  PageSettings.RightMarginStr = '25.4'
+  PageSettings.BottomMarginStr = '25.4'
+  RulerAutoUnit = False
+  MeasUnit = duCenti
+  WheelZoom = False
+  WheelZoomIncrement = 10
+  WheelZoomMin = 10
+  WheelZoomMax = 500
+  BorderStyle = bsSingle
+  Color = 6052956
+  ParentColor = False
+  Static_ = False
+  StartScreen = True
+  CurrLayer = 0
+  Active = True
+  SniffObjectEvents = False
+  ToneUp = 'XYLOPHONE'
+  ToneDown = 'XYLOPHONE'
+  TonePress = 'XYLOPHONE'
+  ToneTagChange = 'XYLOPHONE'
+  PitchUp = 'A5'
+  PitchDown = 'A5'
+  PitchTagChange = 'A5'
+  PitchPress = 'A5'
+  VolumeUp = 100
+  VolumeDown = 100
+  VolumeTagChange = 100
+  VolumePress = 100
+  SoundUp = 'None'
+  SoundDown = 'None'
+  SoundTagChange = 'None'
+  SoundPress = 'None'
+  ShowRuler = False
+  StaticResourceSize = 0
+  Orientation = 1
+  ExplicitWidth = 200
+  ExplicitHeight = 200
+end
+ScreenCount=1
+ActiveScreen=Screen1
+
+PROJECT_INFO_START
+VERSION        = 8
+BOARD          = EasyMx_PRO_v7_for_STM32_ARM_9A
+DEFAULT_SCHEME = VTFT_EasyMx_PRO_v7_for_STM32_ARM
+COMPILER       = mikroC PRO for ARM
+CONTROLLER     = ILI9341_8bit
+TPCONTROLLER   = DEFAULT
+CALIBRATION    = Manual
+TP_ENABLED     = True
+DIMENSIONS     = 320x240
+
+TFT_CONNECTION_START
+TFT_BLED=GPIOE_ODR.B9
+TFT_CS=GPIOE_ODR.B15
+TFT_DataPort=GPIOE_ODR
+TFT_RD=GPIOE_ODR.B10
+TFT_RS=GPIOE_ODR.B12
+TFT_RST=GPIOE_ODR.B8
+TFT_WR=GPIOE_ODR.B11
+TFT_CONNECTION_END
+
+TP_CONNECTION_START
+DRIVEX_LEFT=GPIOB_ODR.B1
+DRIVEX_RIGHT=GPIOB_ODR.B8
+DRIVEY_UP=GPIOB_ODR.B9
+DRIVEY_DOWN=GPIOB_ODR.B0
+TP_CONNECTION_END
+
+TP_ADC_START
+READ_X_CH_NO  =8
+READ_Y_CH_NO  =9
+ADC_THRESHOLD =1500
+X_MIN         =239
+X_MAX         =3700
+Y_MIN         =224
+Y_MAX         =3679
+TP_ADC_END
+
+ADC_CODE_START
+void Init_ADC() {
+  ADC_Set_Input_Channel(_ADC_CHANNEL_8 | _ADC_CHANNEL_9);
+  ADC1_Init();
+  Delay_ms(100);
+}
+ADC_CODE_END
+
+INIT_MCU_CODE_START
+void Init_MCU() {
+  GPIO_Digital_Output(&GPIOE_BASE, _GPIO_PINMASK_9);
+  TFT_BLED = 1;
+  TFT_Set_Default_Mode();
+  TP_TFT_Set_Default_Mode();
+}
+INIT_MCU_CODE_END
+
+CUSTOM_TFT_ROUTINES = False
+AUXILIARY_CODE_START
+void Auxiliary_Code() {
+  // Place your code here
+}
+AUXILIARY_CODE_END
+
+SET_INDEX_CODE_START
+void Set_Index(unsigned short index) {
+  // Place your code here
+}
+SET_INDEX_CODE_END
+
+WRITE_COMMAND_CODE_START
+void Write_Command(unsigned short cmd) {
+  // Place your code here
+}
+WRITE_COMMAND_CODE_END
+
+WRITE_DATA_CODE_START
+void Write_Data(unsigned int _data) {
+  // Place your code here
+}
+WRITE_DATA_CODE_END
+
+EXT_MEM_TYPE=MMC
+EXT_MEM_DECL_CODE_START
+// MMC/SD Connections
+sbit Mmc_Chip_Select           at GPIOD_ODR.B3;
+// end of MMC/SD
+// TFT Get Data globals
+unsigned long currentSector = -1, res_file_size;
+// end of TFT Get Data
+EXT_MEM_DECL_CODE_END
+
+INIT_EXT_MEM_CODE_START
+void Init_Ext_Mem() {
+  // Initialize SPI
+SPI3_Init_Advanced(_SPI_FPCLK_DIV64, _SPI_MASTER | _SPI_8_BIT |
+						 _SPI_CLK_IDLE_LOW | _SPI_FIRST_CLK_EDGE_TRANSITION |
+						 _SPI_MSB_FIRST | _SPI_SS_DISABLE | _SPI_SSM_ENABLE | _SPI_SSI_1,
+						 &_GPIO_MODULE_SPI3_PC10_11_12);
+  Delay_ms(10);
+  //--- init the FAT library
+  if (!Mmc_Fat_Init()) {
+    SPI3_CR1 = 0;
+    // reinitialize spi at higher speed
+    SPI3_Init_Advanced(_SPI_FPCLK_DIV2, _SPI_MASTER | _SPI_8_BIT |
+     				   _SPI_CLK_IDLE_LOW | _SPI_FIRST_CLK_EDGE_TRANSITION |
+	   				   _SPI_MSB_FIRST | _SPI_SS_DISABLE | _SPI_SSM_ENABLE | _SPI_SSI_1,
+	   				   &_GPIO_MODULE_SPI3_PC10_11_12);
+    // Open resource file for read
+    Mmc_Fat_Assign("%FILE_NAME", 0);
+    Mmc_Fat_Reset(&res_file_size);
+  }
+}
+INIT_EXT_MEM_CODE_END
+
+GET_DATA_CODE_START
+char* TFT_Get_Data(unsigned long offset, unsigned long count, unsigned long *num) {
+unsigned long start_sector;
+unsigned int fpos;
+
+  start_sector = Mmc_Get_File_Write_Sector() + offset/512;
+  fpos = (unsigned long)offset%512;
+
+  if(start_sector == currentSector+1) {
+    Mmc_Multi_Read_Sector(f16_sector.fSect);
+    currentSector = start_sector;
+  } else if (start_sector != currentSector) {
+    if(currentSector != -1)
+      Mmc_Multi_Read_Stop();
+    Mmc_Multi_Read_Start(start_sector);
+    Mmc_Multi_Read_Sector(f16_sector.fSect);
+    currentSector = start_sector;
+  }
+
+  if(count>512-fpos)
+    *num = 512-fpos;
+  else
+    *num = count;
+
+  return f16_sector.fSect+fpos;
+}
+GET_DATA_CODE_END
+
+RSRC_FORMAT = CODE
+RSRC_JPEG2BMP = True
+RSRC_FILESYS  = True
+EXT_RSRC      = False
+ONE_PIXEL_SPACE_WIDTH    = False
+PROJECT_INFO_END
