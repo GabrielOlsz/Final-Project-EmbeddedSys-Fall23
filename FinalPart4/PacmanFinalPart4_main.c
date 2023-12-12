@@ -45,6 +45,7 @@ void JoyStickLeft() iv IVT_INT_EXTI2 {
 void JoyStickUp() iv IVT_INT_EXTI4 {
     EXTI_PR.B4 = 1;
     JoyStickDir = 4;
+
 }
 
 void JoyStickRightAndDown() iv IVT_INT_EXTI9_5{
@@ -71,10 +72,10 @@ if((EXTI_PR & 0x0040) == 0x0040){
 void PlayScreen(){
 
    if(JoystickDir == 0){ //default, only happens once
-     player.x0 = 160;
-     player.x1 = 160 + ENTITY_SIZE;
-     player.y0 = 150;
-     player.y1 = 150 + ENTITY_SIZE;
+     player.x0 = 161;
+     player.x1 = player.x0 + ENTITY_SIZE;
+     player.y0 = 161;
+     player.y1 = player.y0 + ENTITY_SIZE;
      player.color = CL_YELLOW;
      TFT_SET_BRUSH(1, player.color, 0,0,0,0);
      TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
@@ -82,13 +83,18 @@ void PlayScreen(){
    else{
      TFT_SET_BRUSH(1, CL_BLACK, 0,0,0,0);
      TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
-     switch(JoystickDir){
+     switch(JoyStickDir){
      case 2: //LEFT
      //Check if player has collided with anything
-     if(player.x0 > 1){ //1 is the size of the border around the Screen that it is detected collision for
-    //Move the player
+     if(player.x0 > ENTITY_SIZE ){ //1 is the size of the border around the Screen that it is detected collision for
+     //Move the player
+     //loop through all wall coords
+     //if not wall[x]{
+     
+     
      player.x0 -= ENTITY_SIZE;
      player.x1 -= ENTITY_SIZE;
+     }
      }
      else{} //Collides with left edge of the screen
      
@@ -96,23 +102,32 @@ void PlayScreen(){
 
      case 4: //UP
      //Check if player has collided with anything
+     if(player.y0 > 14){
      //Move the player
      player.y0 -= ENTITY_SIZE;
-     player.y0 -= ENTITY_SIZE;
+     player.y1 -= ENTITY_SIZE;
+     }
+     else{}
      break;
 
      case 5: //DOWN
      //Check if player has collided with anything
+     if(player.y1 < 232){
      //Move the player
      player.y0 += ENTITY_SIZE;
      player.y1 += ENTITY_SIZE;
+     }
+     else{}
      break;
 
      case 6: //RIGHT
      //Check if player has collided with anything
+     if(player.x1 < 318){
      //Move the player
      player.x0 += ENTITY_SIZE;
      player.x1 += ENTITY_SIZE;
+     }
+     else{}
      break;
      
      default:
@@ -146,10 +161,10 @@ void main() {
          Start_TP();
          ClearScreen();
          RCC_APB2ENR.IOPEEN = 1;
-//         Check_TP();
 
         for(;;) {
 
+                 PlayScreen();
                 /*
                  switch(ScreenStateMachine){
                   case 1:
@@ -185,7 +200,7 @@ void main() {
                          USART1_DR = left[i];
 
                          }
-                           JoyStickDir = 0;
+                           //JoyStickDir = 0;
                      break;
 
                      case 4:
@@ -193,7 +208,7 @@ void main() {
                      while(USART1_SR.TC == 0) {}
                      USART1_DR = up[i];
                      }
-                          JoyStickDir = 0;
+                         // JoyStickDir = 0;
                      break;
 
                      case 5:
@@ -201,7 +216,7 @@ void main() {
                          while(USART1_SR.TC == 0) {}
                          USART1_DR = down[i];
                          }
-                          JoyStickDir = 0;
+                          //JoyStickDir = 0;
                      break;
 
                      case 6:
@@ -209,7 +224,7 @@ void main() {
                            while(USART1_SR.TC == 0) {}
                            USART1_DR = right[i];
                            }
-                           JoyStickDir = 0;
+                         //  JoyStickDir = 0;
                      break;
 
 //                     case 13:
@@ -221,7 +236,7 @@ void main() {
 //                     break;
 
                      default:
-                     JoyStickDir = 0;
+                     //JoyStickDir = 0;
                      break;
 
                 }
@@ -275,7 +290,17 @@ void main() {
  //**************************************************************************************************
 
 
+ int CheckWallCollision(){
+   for(int i = 0, i >= numWalls, i++){
+      if(walls[i].y1 >= player.y0 || walls[i].x0 >= player.x1 || walls[i].y0 <= player.y1 || walls[i].x1 <= player.x0){
+       return 1; //Collision has occured
+      }
+      return 0;
 
+   }
+
+
+}
 
 
  void JoyStickConfiguration(){
@@ -495,7 +520,7 @@ void Timer1Configuration(){
         TIM1_CR1 = 0x0001;         // Enable TIMER1
 
 }
-//Objective 3************************************************************************************************************
+
 void Timer3IntConfiguration(){
         RCC_APB1ENR |= (1 << 1);// Enable TIMER3 clock. RCC: Clock Configuration Register
         TIM3_CR1 = 0x0000;          // Disable timer until configuration is complete
@@ -517,6 +542,3 @@ void Timer3IntConfiguration(){
         TIM3_CR1 = 0x0001;          // Enable TIMER3
 }
 
-
-
- //****************************************************************************************

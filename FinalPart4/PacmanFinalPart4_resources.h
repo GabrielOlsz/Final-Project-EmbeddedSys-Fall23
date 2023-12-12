@@ -11,6 +11,8 @@ void InitializeUSART1();        // Sub function which initializes the registers 
 void Timer1Configuration();
 void Timer3IntConfiguration();
 void initializeGPIO();
+int CheckWallCollision();
+int CheckFoodCollision();
 
 
 
@@ -26,6 +28,9 @@ void initializeGPIO();
  struct EntityProperties player;
  struct EntityProperties ghosts[4];
  struct EntityProperties food[200];
+ unsigned long int numWalls = 17;
+ struct EntityProperties walls[numWalls];
+ 
 
  #define ENTITY_SIZE 20
  #define BORDER_X 320
