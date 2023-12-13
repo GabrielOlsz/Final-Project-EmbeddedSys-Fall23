@@ -79,22 +79,24 @@ void PlayScreen(){
      player.color = CL_YELLOW;
      TFT_SET_BRUSH(1, player.color, 0,0,0,0);
      TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
+      TFT_Set_Pen(CL_BLACK, 1);
    }
+
    else{
      TFT_SET_BRUSH(1, CL_BLACK, 0,0,0,0);
      TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
      switch(JoyStickDir){
      case 2: //LEFT
      //Check if player has collided with anything
+     //Loop through all wall coords with CheckWallCollision
      if(player.x0 > ENTITY_SIZE ){ //1 is the size of the border around the Screen that it is detected collision for
-     //Move the player
-     //loop through all wall coords
-     //if not wall[x]{
-     
-     
-     player.x0 -= ENTITY_SIZE;
-     player.x1 -= ENTITY_SIZE;
-     }
+//       if(CheckWallCollision() == 1){}
+//       if(CheckWallCollision() == 0){
+
+       //Move the player
+       player.x0 -= ENTITY_SIZE;
+       player.x1 -= ENTITY_SIZE;
+//       }
      }
      else{} //Collides with left edge of the screen
      
@@ -103,29 +105,41 @@ void PlayScreen(){
      case 4: //UP
      //Check if player has collided with anything
      if(player.y0 > 14){
+//       if(CheckWallCollision() == 1){}
+//       if(CheckWallCollision() == 0){
+     
      //Move the player
-     player.y0 -= ENTITY_SIZE;
-     player.y1 -= ENTITY_SIZE;
+       player.y0 -= ENTITY_SIZE;
+       player.y1 -= ENTITY_SIZE;
+//       }
      }
      else{}
      break;
 
      case 5: //DOWN
      //Check if player has collided with anything
-     if(player.y1 < 232){
+     if(player.y1 < 240){
+//       if(CheckWallCollision() == 1){}
+//       if(CheckWallCollision() == 0){
+     
      //Move the player
-     player.y0 += ENTITY_SIZE;
-     player.y1 += ENTITY_SIZE;
+       player.y0 += ENTITY_SIZE;
+       player.y1 += ENTITY_SIZE;
+//       }
      }
      else{}
      break;
 
      case 6: //RIGHT
      //Check if player has collided with anything
-     if(player.x1 < 318){
+     if(player.x1 < 320){
+//       if(CheckWallCollision() == 1){}
+//       if(CheckWallCollision() == 0){
+     
      //Move the player
-     player.x0 += ENTITY_SIZE;
-     player.x1 += ENTITY_SIZE;
+       player.x0 += ENTITY_SIZE;
+       player.x1 += ENTITY_SIZE;
+//       }
      }
      else{}
      break;
@@ -161,6 +175,7 @@ void main() {
          Start_TP();
          ClearScreen();
          RCC_APB2ENR.IOPEEN = 1;
+         drawMap();
 
         for(;;) {
 
@@ -291,15 +306,59 @@ void main() {
 
 
  int CheckWallCollision(){
-   for(int i = 0, i >= numWalls, i++){
+   for(i = 0; i < 17; i++){
       if(walls[i].y1 >= player.y0 || walls[i].x0 >= player.x1 || walls[i].y0 <= player.y1 || walls[i].x1 <= player.x0){
        return 1; //Collision has occured
       }
       return 0;
 
    }
+}
 
 
+void drawMap(){
+ TFT_Set_Pen(CL_BLUE, 1);
+
+  TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
+  TFT_Rectangle(0,0, 320, 240);
+
+  TFT_Set_Brush(0, CL_BLUE, 0, 0, 0, 0);
+
+  TFT_Rectangle(0,0, 319, 239); //blue outline rectangle
+
+  TFT_Rectangle_Round_Edges(30, 30, 100, 50, 8);
+
+  TFT_Rectangle_Round_Edges(30, 30, 50, 80, 8);
+
+  TFT_Rectangle_Round_Edges(220, 30, 290, 50, 8);
+
+  TFT_Rectangle_Round_Edges(270, 30, 290, 80, 8);
+
+  TFT_Rectangle_Round_Edges(130, 30, 190, 60, 8);
+
+  TFT_Rectangle_Round_Edges(30, 190, 100, 210, 8);
+
+  TFT_Rectangle_Round_Edges(30, 160, 50, 210, 8);
+
+  TFT_Rectangle_Round_Edges(220, 190, 290, 210, 8);
+
+  TFT_Rectangle_Round_Edges(270, 160, 290, 210, 8);
+
+  TFT_Rectangle_Round_Edges(130, 180, 190, 210, 8);
+
+  TFT_Rectangle_Round_Edges(0, 110, 20, 130, 4);
+
+  TFT_Rectangle_Round_Edges(50, 110, 100, 130, 8);
+
+  TFT_Rectangle_Round_Edges(130, 90, 190, 150, 8);
+
+  TFT_Rectangle_Round_Edges(80, 90, 100, 150, 8);
+
+  TFT_Rectangle_Round_Edges(300, 110, 320, 130, 4);
+
+  TFT_Rectangle_Round_Edges(220, 110, 270, 130, 8);
+
+  TFT_Rectangle_Round_Edges(220, 90, 240, 150, 8);
 }
 
 
@@ -541,4 +600,3 @@ void Timer3IntConfiguration(){
         TIM3_DIER.UIE = 1;          // Update interrupt enable
         TIM3_CR1 = 0x0001;          // Enable TIMER3
 }
-
