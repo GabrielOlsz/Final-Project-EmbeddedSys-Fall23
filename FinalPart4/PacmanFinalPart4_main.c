@@ -74,7 +74,7 @@ void PlayScreen(){
    if(JoystickDir == 0){ //default, only happens once
      player.x0 = 151;
      player.x1 = player.x0 + SIZE;
-     player.y0 = 151;
+     player.y0 = 163;
      player.y1 = player.y0 + SIZE;
      player.color = CL_YELLOW;
      TFT_SET_BRUSH(1, player.color, 0,0,0,0);
@@ -370,7 +370,7 @@ void drawMap(){
 
   TFT_Rectangle_Round_Edges(270, 30, 290, 80, 8);
 
-  TFT_Rectangle_Round_Edges(130, 30, 190, 60, 8);
+  TFT_Rectangle_Round_Edges(130, 30, 190, 50, 8); //top middle box
 
   TFT_Rectangle_Round_Edges(30, 190, 100, 210, 8);
 
@@ -380,21 +380,21 @@ void drawMap(){
 
   TFT_Rectangle_Round_Edges(270, 160, 290, 210, 8);
 
-  TFT_Rectangle_Round_Edges(130, 180, 190, 210, 8);
+  TFT_Rectangle_Round_Edges(130, 190, 190, 210, 8); //bottom middle box
 
   TFT_Rectangle_Round_Edges(0, 110, 20, 130, 4);
 
   TFT_Rectangle_Round_Edges(50, 110, 100, 130, 8);
 
-  TFT_Rectangle_Round_Edges(130, 90, 190, 150, 8);
+  TFT_Rectangle_Round_Edges(130, 80, 190, 160, 8); //center box
 
-  TFT_Rectangle_Round_Edges(80, 90, 100, 150, 8);
+  TFT_Rectangle_Round_Edges(80, 80, 100, 160, 8); //vertical box of left T shape
 
   TFT_Rectangle_Round_Edges(300, 110, 320, 130, 4);
 
   TFT_Rectangle_Round_Edges(220, 110, 270, 130, 8);
 
-  TFT_Rectangle_Round_Edges(220, 90, 240, 150, 8);
+  TFT_Rectangle_Round_Edges(220, 80, 240, 160, 8); //verticalbox of right T shape
 }
 
 
