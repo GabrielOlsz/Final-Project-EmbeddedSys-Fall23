@@ -14,7 +14,7 @@
 #include "PacmanFinalPart4_resources.h" //Has all of the interrupt service routines for the Joystick buttons to work
 #include "PacmanScreens.h"
 
-unsigned long int gameTick = 0;
+
 
 
 //INTERRUPT SERVICE ROUTINES
@@ -73,9 +73,9 @@ void PlayScreen(){
 
    if(JoystickDir == 0){ //default, only happens once
      player.x0 = 151;
-     player.x1 = player.x0 + ENTITY_SIZE;
+     player.x1 = player.x0 + SIZE;
      player.y0 = 151;
-     player.y1 = player.y0 + ENTITY_SIZE;
+     player.y1 = player.y0 + SIZE;
      player.color = CL_YELLOW;
      TFT_SET_BRUSH(1, player.color, 0,0,0,0);
      TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
@@ -93,15 +93,15 @@ void PlayScreen(){
      case 2: //LEFT
      //Check if player has collided with anything
      //Loop through all wall coords with CheckWallCollision
-     if(player.x0 > ENTITY_SIZE ){ //1 is the size of the border around the Screen that it is detected collision for
+     if(player.x0 > SIZE ){ //1 is the size of the border around the Screen that it is detected collision for
        if(CheckWallCollision() == 1){}
        if(CheckWallCollision() == 0){
 
-       //Move the player
        q = player.x0 - ENTITY_SIZE;
        e = player.x1 - ENTITY_SIZE;
        if(CheckNextWallCollision() == 1){}
        if(CheckNextWallCollision() == 0){
+         //Move the player
          player.x0 -= ENTITY_SIZE;
          player.x1 -= ENTITY_SIZE;
          }
@@ -117,9 +117,14 @@ void PlayScreen(){
        if(CheckWallCollision() == 1){}
        if(CheckWallCollision() == 0){
      
-     //Move the player
-       player.y0 -= ENTITY_SIZE;
-       player.y1 -= ENTITY_SIZE;
+       w = player.y0 - ENTITY_SIZE;
+       r = player.y1 - ENTITY_SIZE;
+       if(CheckNextWallCollision() == 1){}
+       if(CheckNextWallCollision() == 0){
+         //Move the player
+         player.y0 -= ENTITY_SIZE;
+         player.y1 -= ENTITY_SIZE;
+         }
        }
      }
      else{}
@@ -130,10 +135,15 @@ void PlayScreen(){
      if(player.y1 < 239){
        if(CheckWallCollision() == 1){}
        if(CheckWallCollision() == 0){
-     
-     //Move the player
-       player.y0 += ENTITY_SIZE;
-       player.y1 += ENTITY_SIZE;
+
+       w = player.y0 + ENTITY_SIZE;
+       r = player.y1 + ENTITY_SIZE;
+       if(CheckNextWallCollision() == 1){}
+       if(CheckNextWallCollision() == 0){
+         //Move the player
+         player.y0 += ENTITY_SIZE;
+         player.y1 += ENTITY_SIZE;
+         }
        }
      }
      else{}
@@ -141,13 +151,20 @@ void PlayScreen(){
 
      case 6: //RIGHT
      //Check if player has collided with anything
-     if(player.x1 < 320-ENTITY_SIZE){
+     if(player.x1 < 320-SIZE){
        if(CheckWallCollision() == 1){}
        if(CheckWallCollision() == 0){
      
-     //Move the player
-       player.x0 += ENTITY_SIZE;
-       player.x1 += ENTITY_SIZE;
+
+       q = player.x0 + ENTITY_SIZE;
+       e = player.x1 + ENTITY_SIZE;
+       if(CheckNextWallCollision() == 1){}
+       if(CheckNextWallCollision() == 0){
+         //Move the player
+         player.x0 += ENTITY_SIZE;
+         player.x1 += ENTITY_SIZE;
+         }
+       
        }
      }
      else{}
@@ -313,16 +330,6 @@ void main() {
  //**************************************************************************************************
  //**************************************************************************************************
 
- /*
- int CheckWallCollision(){
-   for(i = 0; i < 17; i++){
-      if(walls[i].y1 >= player.y0 || walls[i].x0 >= player.x1 || walls[i].y0 <= player.y1 || walls[i].x1 <= player.x0){
-       return 1; //Collision has occured
-      }
-      return 0;
-
-   }
-}   */
 
 int CheckWallCollision(){
     for(i = 0; i < numWalls; i++){
