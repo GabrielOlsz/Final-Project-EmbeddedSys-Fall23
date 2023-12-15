@@ -16,13 +16,13 @@ int CheckFoodCollision();
 void drawMap();
 int CheckNextWallCollision();
 
- #define SIZE 15        //actually acting as pacman size currently
+ #define SIZE 20        //actually acting as pacman size currently
  #define ENTITY_SIZE 5 //acting as how many pixels pacman moves currently - change names eventually
  #define BORDER_X 320
  #define BORDER_Y 240
  #define FOOD_SIZE 4
  #define FOOD_BIG_SIZE 7
- #define numWalls 18
+ #define numWalls 21
 
  struct EntityProperties{
         int x0;
@@ -44,9 +44,8 @@ int CheckNextWallCollision();
 struct EntityProperties player;
 struct EntityProperties ghosts[4];
 struct EntityProperties food[200];
-struct Wall walls[numWalls] = {{0,239, 320, 340}, {30, 30, 100, 50}, {30, 30, 50, 80}, {220, 30, 290, 50}, {270, 30, 290, 80}, {130, 30, 190, 60}, {30, 190, 100, 210}, {30, 160, 50, 210}, {220, 190, 290, 210}, {270, 160, 290, 210}, {130, 180, 190, 210}, {0, 110, 20, 130}, {50, 110, 100, 130}, {130, 90, 190, 150}, {80, 90, 100, 150}, {300, 110, 320, 130}, {220, 110, 270, 130}, {220, 90, 240, 150}};
-
- 
+struct Wall walls[numWalls] = {{0,0,2,240},{0,0,320,2},{319,0,320,240}, {0,239, 320, 240}, {30, 30, 100, 50}, {30, 30, 50, 80}, {220, 30, 290, 50}, {270, 30, 290, 80}, {130, 30, 190, 60}, {30, 190, 100, 210}, {30, 160, 50, 210}, {220, 190, 290, 210}, {270, 160, 290, 210}, {130, 180, 190, 210}, {0, 110, 20, 130}, {50, 110, 100, 130}, {130, 90, 190, 150}, {80, 90, 100, 150}, {300, 110, 320, 130}, {220, 110, 270, 130}, {220, 90, 240, 150}};
+                              //left border, top border, right border,  bottom border
 
 
 unsigned int right[11] = {'R','T',' ','P','R','E','S','S','E','D', ' '};

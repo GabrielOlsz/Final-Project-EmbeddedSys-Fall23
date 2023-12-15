@@ -93,10 +93,12 @@ void PlayScreen(){
      case 2: //LEFT
      //Check if player has collided with anything
      //Loop through all wall coords with CheckWallCollision
-     if(player.x0 > SIZE ){ //1 is the size of the border around the Screen that it is detected collision for
        if(CheckWallCollision() == 1){}
        if(CheckWallCollision() == 0){
 
+       w = player.y0;
+       r = player.y1;
+       
        q = player.x0 - ENTITY_SIZE;
        e = player.x1 - ENTITY_SIZE;
        if(CheckNextWallCollision() == 1){}
@@ -106,17 +108,18 @@ void PlayScreen(){
          player.x1 -= ENTITY_SIZE;
          }
        }
-     }
      else{} //Collides with left edge of the screen
      
      break;
 
      case 4: //UP
      //Check if player has collided with anything
-     if(player.y0 > 14){
        if(CheckWallCollision() == 1){}
        if(CheckWallCollision() == 0){
      
+       q = player.x0;
+       e = player.x1;
+       
        w = player.y0 - ENTITY_SIZE;
        r = player.y1 - ENTITY_SIZE;
        if(CheckNextWallCollision() == 1){}
@@ -126,15 +129,16 @@ void PlayScreen(){
          player.y1 -= ENTITY_SIZE;
          }
        }
-     }
      else{}
      break;
 
      case 5: //DOWN
      //Check if player has collided with anything
-     if(player.y1 < 239){
        if(CheckWallCollision() == 1){}
        if(CheckWallCollision() == 0){
+      
+       q = player.x0;
+       e = player.x1;
 
        w = player.y0 + ENTITY_SIZE;
        r = player.y1 + ENTITY_SIZE;
@@ -145,16 +149,16 @@ void PlayScreen(){
          player.y1 += ENTITY_SIZE;
          }
        }
-     }
      else{}
      break;
 
      case 6: //RIGHT
      //Check if player has collided with anything
-     if(player.x1 < 320-SIZE){
        if(CheckWallCollision() == 1){}
        if(CheckWallCollision() == 0){
      
+       w = player.y0;
+       r = player.y1;
 
        q = player.x0 + ENTITY_SIZE;
        e = player.x1 + ENTITY_SIZE;
@@ -164,9 +168,7 @@ void PlayScreen(){
          player.x0 += ENTITY_SIZE;
          player.x1 += ENTITY_SIZE;
          }
-       
        }
-     }
      else{}
      break;
      
