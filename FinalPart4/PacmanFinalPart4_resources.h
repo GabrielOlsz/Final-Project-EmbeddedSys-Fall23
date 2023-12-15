@@ -14,13 +14,14 @@ void initializeGPIO();
 int CheckWallCollision();
 int CheckFoodCollision();
 void drawMap();
+int CheckNextWallCollision();
 
- #define ENTITY_SIZE 20
+ #define ENTITY_SIZE 15
  #define BORDER_X 320
  #define BORDER_Y 240
  #define FOOD_SIZE 4
  #define FOOD_BIG_SIZE 7
- #define numWalls 17
+ #define numWalls 18
 
  struct EntityProperties{
         int x0;
@@ -67,3 +68,9 @@ unsigned long int pb5state = 0;
 unsigned long int pc13state = 0;
 unsigned long int JoyStickDir = 0;
 unsigned long int ScreenStateMachine = 0;
+
+
+unsigned long int q = 0;
+unsigned long int w = 0;
+unsigned long int e = 0;
+unsigned long int r = 0;
