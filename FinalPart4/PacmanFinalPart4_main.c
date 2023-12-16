@@ -89,7 +89,6 @@ void main() {
 
         for(;;) {
                  ScreenSwitch();
-//                 PlayScreen();
                  Seg7Display();
                  Timer3IntConfiguration();
 //                 JoystickUART();
@@ -107,50 +106,56 @@ void TitleScreen(){
     TFT_SET_PEN(CL_WHITE,2);
     TFT_Rectangle(0,0, 319, 239); //outline rectangle
     TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
-    TFT_WRITE_TEXT("PAC-MAN  MADE BY GABE, ALEX, ANTHONY 2023", 15,220);
-    TFT_WRITE_TEXT("PAC-MAN", 140,40);
+    TFT_WRITE_TEXT("MADE BY GABE, ANTHONY, and ALEX  2023", 30, 220);
+    TFT_WRITE_TEXT("PAC-MAN", 130,40);
     TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
-    TFT_WRITE_TEXT("Start Game (Up)", 120,110);
-    TFT_WRITE_TEXT("High Scores (Down)", 110,130);
-    TFT_WRITE_TEXT("How to Play (Right)", 112,150);
+    TFT_WRITE_TEXT("Start Game (Up)", 110,110);
+    TFT_WRITE_TEXT("High Scores (Down)", 100,130);
+    TFT_WRITE_TEXT("How to Play (Right)", 102,150);
 
     //Loop for drawing ghost bodies
-    TFT_Set_Pen(CL_FUCHSIA, 1);
-    TFT_Set_Brush(1, CL_FUCHSIA, 0, 0, 0, 0);
     for(i = 0; i<numHomeGhosts; i++){
-      TFT_Rectangle_Round_Edges(homeghosts[i].x0,homeghosts[i].y0,homeghosts[i].x1,homeghosts[i].y1, 15);
+      if(i == 0){
+      TFT_Set_Pen(CL_FUCHSIA, 1);
+      TFT_Set_Brush(1, CL_FUCHSIA, 0, 0, 0, 0);
+      TFT_Rectangle_Round_Edges(homeghosts[i].x0,homeghosts[i].y0,homeghosts[i].x1,homeghosts[i].y1, 17);
+      TFT_Rectangle(homeghosts[i].x0,homeghosts[i].y0+20,homeghosts[i].x1,homeghosts[i].y1); //Fills in a gap when making ghost legs
+      }
+      else{
+      TFT_Set_Pen(CL_LIME, 1);
+      TFT_Set_Brush(1, CL_LIME, 0, 0, 0, 0);
+      TFT_Rectangle_Round_Edges(homeghosts[i].x0,homeghosts[i].y0,homeghosts[i].x1,homeghosts[i].y1, 17);
+      TFT_Rectangle(homeghosts[i].x0,homeghosts[i].y0+20,homeghosts[i].x1,homeghosts[i].y1); //Fills in a gap when making ghost legs
+      }
     }
 
     //Loop for drawing ghost legs
-    for(i = 0; i < numHomeGhostEyes; i++){
-      if(i < numHomeGhostEyes/2){
-      TFT_Set_Pen(CL_WHITE, 1);
-      TFT_Set_Brush(1, CL_WHITE, 0, 0, 0, 0);
-      TFT_Circle(homeghosteyes[i].x0, homeghosteyes[i].y0, 5);
+    for(i = 0; i<numGhostLegs; i++){
+      if(i < 3){
+        TFT_Set_Pen(CL_FUCHSIA, 1);
+        TFT_Set_Brush(1, CL_FUCHSIA, 0, 0, 0, 0);
+        TFT_Circle(ghostLegs[i].x0,ghostLegs[i].y0, 5);
       }
       else{
-      TFT_Set_Pen(CL_BLACK, 1);
-      TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
-      TFT_Circle(homeghosteyes[i].x0, homeghosteyes[i].y0, 2);
-    }
+        TFT_Set_Pen(CL_LIME, 1);
+        TFT_Set_Brush(1, CL_LIME, 0, 0, 0, 0);
+        TFT_Circle(ghostLegs[i].x0,ghostLegs[i].y0, 5);
+      }
     }
     
-/*
-    //Loops for drawing ghosts rectangle eyes
-    for(i = 0; i< numHomeGhostEyes; i++){
-      if(i < numHomeGhostEyes/2){
+    //Loops for drawing ghost eyes
+    for(i = 0; i < numHomeGhostEyes; i++){
       TFT_Set_Pen(CL_WHITE, 1);
       TFT_Set_Brush(1, CL_WHITE, 0, 0, 0, 0);
-      TFT_Rectangle(homeghosteyes[i].x0,homeghosteyes[i].y0,homeghosteyes[i].x1,homeghosteyes[i].y1);
+      TFT_Circle(homeghosteyesWhite[i].x0, homeghosteyesWhite[i].y0, 6);
       }
-      else{
-      //if(i > numHomeGhostEyes){
+    for(i = 0; i < numHomeGhostEyes; i++){
       TFT_Set_Pen(CL_BLACK, 1);
       TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
-      TFT_Rectangle(homeghosteyes[i].x0,homeghosteyes[i].y0,homeghosteyes[i].x1,homeghosteyes[i].y1);
-      }
+      TFT_Circle(homeghosteyesBlack[i].x0, homeghosteyesBlack[i].y0, 3);
     }
-*/
+
+    
 
 
 
@@ -434,6 +439,7 @@ void PlayScreen(){
      if(CheckFoodCollision() == 0){}
      if(CheckFoodCollision() == 1){
        playerScore++;
+       TFT_SET_BRUSH(1, CL_BLACK, 0,0,0,0);
        TFT_Rectangle(food[i].x0,food[i].y0,food[i].x1,food[i].y1);
        food[i].x0 = 0;
        food[i].y0 = 0;
@@ -488,7 +494,7 @@ void drawMap(){   //Draws the map (rectangles) and the one ghost in the center
   TFT_Rectangle_Round_Edges(50, 110, 100, 130, 8);
 
   //Center box split in 2
-  TFT_Rectangle_Round_Edges(130, 80, 190, 108, 8); //upper center box
+  TFT_Rectangle_Round_Edges(130, 80, 190, 107, 8); //upper center box
                                           //110
   TFT_Rectangle_Round_Edges(130, 132, 190, 160, 8); //lower center box
                                 //130
