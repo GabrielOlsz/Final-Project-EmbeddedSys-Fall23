@@ -20,6 +20,7 @@ void drawFood();
 void Seg7Display();
 void pauseUART();
 void JoystickUART();
+int CheckGhostCollision();
 
 //Screen Functions
 void ScreenSwitch();

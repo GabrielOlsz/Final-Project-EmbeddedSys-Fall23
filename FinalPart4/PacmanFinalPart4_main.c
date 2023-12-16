@@ -106,8 +106,8 @@ void TitleScreen(){
     TFT_SET_PEN(CL_WHITE,2);
     TFT_Rectangle(0,0, 319, 239); //outline rectangle
     TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
-    TFT_WRITE_TEXT("MADE BY GABE, ANTHONY, and ALEX  2023", 30, 220);
-    TFT_WRITE_TEXT("PAC-MAN", 130,40);
+    TFT_WRITE_TEXT("MADE  BY  GABE,  ANTHONY, and  ALEX  2023", 30, 220);
+    TFT_WRITE_TEXT("PAC-MAN", 130,70);
     TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
     TFT_WRITE_TEXT("Start Game (Up)", 110,110);
     TFT_WRITE_TEXT("High Scores (Down)", 100,130);
@@ -155,27 +155,9 @@ void TitleScreen(){
       TFT_Circle(homeghosteyesBlack[i].x0, homeghosteyesBlack[i].y0, 3);
     }
 
-    
-
-
-
     JoyStickDir = 1;
     }
     
- /*
- //Draw ghost
-TFT_Set_Pen(CL_FUCHSIA, 1);
-TFT_Set_Brush(1, CL_FUCHSIA, 0, 0, 0, 0);
-TFT_Rectangle_Round_Edges(ghosts[0].x0,ghosts[0].y0,ghosts[0].x1,ghosts[0].y1, 5);
-TFT_Set_Pen(CL_WHITE, 1);
-TFT_Set_Brush(1, CL_WHITE, 0, 0, 0, 0);
-TFT_Rectangle(ghostEyes[0].x0,ghostEyes[0].y0,ghostEyes[0].x1,ghostEyes[0].y1);
-TFT_Rectangle(ghostEyes[1].x0,ghostEyes[1].y0,ghostEyes[1].x1,ghostEyes[1].y1);
-TFT_Set_Pen(CL_BLACK, 1);
-TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
-TFT_Rectangle(ghostEyes[2].x0,ghostEyes[2].y0,ghostEyes[2].x1,ghostEyes[2].y1);
-TFT_Rectangle(ghostEyes[3].x0,ghostEyes[3].y0,ghostEyes[3].x1,ghostEyes[3].y1);
-*/
     
     if(JoyStickDir == 4){ //Press Joystick up
       ScreenStateMachine = 1; //Play Game
@@ -201,6 +183,10 @@ TFT_Rectangle(ghostEyes[3].x0,ghostEyes[3].y0,ghostEyes[3].x1,ghostEyes[3].y1);
 void ScreenSwitch(){
 
      switch(ScreenStateMachine){
+      case 0:
+        TitleScreen();
+        break;
+      
       case 1:
         PlayScreen();
         break;
@@ -230,19 +216,88 @@ void ScreenSwitch(){
 
 
 void VictoryScreen(){
-
+     if(JoyStickDir == 0){  //Screen only prints once and does not loop
+        TFT_SET_PEN(CL_WHITE,2);
+        TFT_Rectangle(0,0, 319, 239); //outline rectangle
+        TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
+        TFT_WRITE_TEXT("VICTORY!", 140,70);
+        TFT_SET_FONT(TFT_defaultfont, CL_WHITE, FO_HORIZONTAL);
+        TFT_WRITE_TEXT("You collected all", 115,90);
+        TFT_WRITE_TEXT("of the food!", 130, 110);
+        TFT_SET_FONT(TFT_defaultfont, CL_SILVER, FO_HORIZONTAL);
+        TFT_WRITE_TEXT("Congratulations!", 115,130);
+        TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
+        TFT_WRITE_TEXT("High Score Page (Down)", 95,190);
+        TFT_WRITE_TEXT("Back to Home (Up)", 110,210);
+        JoyStickDir = 1;
+   }
+   if(JoyStickDir == 5){ //Press Joystick down
+      ScreenStateMachine = 2; //High Score Screen
+      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+    }
+   if(JoyStickDir == 4){ //Press Joystick up
+      ScreenStateMachine = 0; //Title Screen
+      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+    }
 }
 
 void HowToPlay(){
-
+    
+    if(JoyStickDir == 0){  //Screen only prints once and does not loop
+      TFT_SET_PEN(CL_WHITE,2);
+      TFT_Rectangle(0,0, 319, 239); //outline rectangle
+      TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
+      TFT_WRITE_TEXT("Instructions", 130,70);
+      TFT_SET_FONT(TFT_defaultfont, CL_WHITE, FO_HORIZONTAL);
+      TFT_WRITE_TEXT("* Use the joystick to move up,", 60,90);
+      TFT_WRITE_TEXT(" down, left, and right", 70, 110);
+      TFT_WRITE_TEXT("* Food pellets are worth 1 point", 60,130);
+      TFT_WRITE_TEXT("* Watch out for ghosts!", 60, 150);
+      TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
+      TFT_WRITE_TEXT("Back to Home (Up)", 110,210);
+      JoyStickDir = 1;
+   }
+   if(JoyStickDir == 4){ //Press Joystick up
+      ScreenStateMachine = 0; //Title Screen
+      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+    }
 }
 
 void GameOverScreen(){
-
+   
+    if(JoyStickDir == 0){
+    TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
+    TFT_Rectangle(0,0, 320, 240);
+    TFT_SET_PEN(CL_WHITE,2);
+    TFT_Rectangle(0,0, 319, 239); //outline rectangle
+    TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
+    TFT_WRITE_TEXT("GAME OVER!", 130,70);
+    TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
+    TFT_WRITE_TEXT("Back to Home (Up)", 110,210);
+    JoyStickDir = 1;
+    }
+    if(JoyStickDir == 4){ //Press Joystick up
+      ScreenStateMachine = 0; //Title Screen
+      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+    }
  }
 
 void HighScoreScreen(){
-
+   if(JoyStickDir == 0){
+    TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
+    TFT_Rectangle(0,0, 320, 240);
+    TFT_SET_PEN(CL_WHITE,2);
+    TFT_Rectangle(0,0, 319, 239); //outline rectangle
+    TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
+    TFT_WRITE_TEXT("High  Scores", 130,70);
+    TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
+    TFT_WRITE_TEXT("Back to Home (Up)", 110,210);
+    JoyStickDir = 1;
+    }
+    if(JoyStickDir == 4){ //Press Joystick up
+      ScreenStateMachine = 0; //Title Screen
+      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+    }
  }
 
 
@@ -254,8 +309,6 @@ void ClearScreen(){
   TFT_SET_PEN(CL_BLACK,1);
   TFT_SET_BRUSH(1,CL_BLACK,0,0,0,0);
   TFT_RECTANGLE(1,1,319,239);
-  TFT_SET_FONT(TFT_defaultFont, CL_RED, FO_HORIZONTAL);
-
 }
  //**************************************************************************************************
  //**************************************************************************************************
@@ -295,6 +348,15 @@ int CheckNextWallCollision(){
 int CheckFoodCollision(){
     for(i = 0; i < numFood; i++){
         if((player.x0 < food[i].x1) && (player.x1 > food[i].x0) && (player.y0 < food[i].y1) && (player.y1 > food[i].y0)){
+            return 1; // Collision
+        }
+    }
+    return 0; // No collision
+}
+
+int CheckGhostCollision(){
+    for(i = 0; i < ghostNum; i++){
+        if((player.x0 < ghosts[i].x1) && (player.x1 > ghosts[i].x0) && (player.y0 < ghosts[i].y1) && (player.y1 > ghosts[i].y0)){
             return 1; // Collision
         }
     }
@@ -446,14 +508,22 @@ void PlayScreen(){
        food[i].x1 = 1;
        food[i].y1 = 1;
        drawFood();
+       //Attempt to go to victory Screen after all food is collected
+      /* for(i = 0; i < numFood; i++){
+         if(food[i].x0 == 0 && food[i].y0 == 0 && food[i].x1 == 1 && food[i].y1 == 1){
+         ScreenStateMachine = 3;
+         }
+       } */
        GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER!
      }
 
 
-     //if player has collided with a ghost
-     //if yes, end the game
-     //loop through all the possible ghost positions, compare to player position
-
+     //if player has collided with a ghost then game over
+     if(CheckGhostCollision() == 0){}
+     if(CheckGhostCollision() == 1){
+        ScreenStateMachine = 4;
+        JoyStickDir = 0;
+     }
      while(gameTick == 0){};
      gameTick = 0;
      }
