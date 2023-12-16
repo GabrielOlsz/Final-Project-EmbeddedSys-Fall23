@@ -186,8 +186,8 @@ void PlayScreen(){
      TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
 
      //if player has collided with any of the food
-     //if yes, check if food is visibile, if yes, increase score, set visibility to 0
      //loop through all the possible food positions, compare to player position
+     //THIS NEEDS TO BE IMPLEMENTED ---> in drawMap() make a loop that draws all the food bits, this means for(){ tft_rectangle([i]x0,[i]y0,[i]x1,[i]y1) -- this is meant to delete the food even if touched only slightly and will leave no residue
      if(CheckFoodCollision() == 0){}
      if(CheckFoodCollision() == 1){
        playerScore++;
@@ -379,7 +379,7 @@ int CheckFoodCollision(){
 }
 
 
-void drawMap(){   //Draws the map (rectangles) and bits (food)
+void drawMap(){   //Draws the map (rectangles) and the one ghost in the center
  TFT_Set_Pen(CL_BLUE, 1);
 
   TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
@@ -430,13 +430,10 @@ void drawMap(){   //Draws the map (rectangles) and bits (food)
   TFT_Rectangle_Round_Edges(220, 80, 240, 160, 8); //verticalbox of right T shape
 
 
-//Draw Pellets:
 
-TFT_Set_Pen(CL_YELLOW, 1);
 
-TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
-
-// TOP ROW
+ /*
+ // TOP ROW
  TFT_Rectangle(8, 12, 12, 16);
 
  TFT_Rectangle(38, 12, 42, 16);
@@ -518,7 +515,7 @@ TFT_Rectangle(308, 192, 312, 196);
 
 TFT_Rectangle(38, 98, 42, 102);
 
-//TFT_Rectangle(38, 118, 42, 122);
+TFT_Rectangle(38, 122, 42, 126);
 
 TFT_Rectangle(38, 144, 42, 148);
 
@@ -531,6 +528,8 @@ TFT_Rectangle(68, 98, 72,102);
 TFT_Rectangle(68, 144, 72, 148);
 
 TFT_Rectangle(68, 174, 72, 178);
+
+
 
 TFT_Rectangle(88, 68, 92, 72);
 
@@ -548,7 +547,10 @@ TFT_Rectangle(116, 128, 120, 132);
 
 TFT_Rectangle(116, 158, 120, 162);
 
-TFT_Rectangle(116, 188, 120, 192);
+TFT_Rectangle(116, 180, 120, 184);
+
+TFT_Rectangle(116, 204, 120, 208);
+
 
 TFT_Rectangle(142, 68, 146, 72);
 
@@ -568,7 +570,9 @@ TFT_Rectangle(200, 128, 204, 132);
 
 TFT_Rectangle(200, 158, 204, 162);
 
-TFT_Rectangle(200, 188, 204, 192);
+TFT_Rectangle(200, 180, 204, 184);
+
+TFT_Rectangle(200, 204, 204, 208);
 
 
 //SIXTH COLUMN
@@ -589,9 +593,12 @@ TFT_Rectangle(228, 174, 232, 178);
 
 TFT_Rectangle(278, 98, 282, 102);
 
-//TFT_Rectangle(278, 118, 282, 122);
+TFT_Rectangle(278, 122, 282, 126);
 
 TFT_Rectangle(278, 144, 282, 148);
+
+*/
+
 //ghost test ******
 TFT_Set_Pen(CL_FUCHSIA, 1);
 TFT_Set_Brush(1, CL_FUCHSIA, 0, 0, 0, 0);
@@ -606,6 +613,16 @@ TFT_Rectangle(ghostEyes[2].x0,ghostEyes[2].y0,ghostEyes[2].x1,ghostEyes[2].y1);
 TFT_Rectangle(ghostEyes[3].x0,ghostEyes[3].y0,ghostEyes[3].x1,ghostEyes[3].y1);
 
 //*****************
+
+//Draw Pellets:
+
+TFT_Set_Pen(CL_YELLOW, 1);
+
+TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
+
+for(i = 0; i < numFood; i++){
+ TFT_Rectangle(food[i].x0,food[i].y0,food[i].x1,food[i].y1);
+}
 
 }
 
