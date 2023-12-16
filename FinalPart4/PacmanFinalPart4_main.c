@@ -248,7 +248,7 @@ void PlayScreen(){
      player.y1 = player.y0 + SIZE;
      player.color = CL_YELLOW;
      TFT_SET_BRUSH(1, player.color, 0,0,0,0);
-     TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
+     TFT_RECTANGLE_Round_Edges(player.x0, player.y0, player.x1, player.y1,8);
      TFT_Set_Pen(CL_BLACK, 1);
      q = player.x0;
      w = player.y0;
@@ -257,9 +257,9 @@ void PlayScreen(){
      mapVar = 1;
     }
 
-//   if(JoyStickDir == 0){ //default, only happens once
-//
-//   }
+   if(JoyStickDir == 0){ //default, only happens once
+
+   }
 
    else{
      TFT_Set_Pen(CL_BLACK, 1);
@@ -274,7 +274,6 @@ void PlayScreen(){
 
        w = player.y0;
        r = player.y1;
-
        q = player.x0 - ENTITY_SIZE;
        e = player.x1 - ENTITY_SIZE;
        if(CheckNextWallCollision() == 1){}
@@ -296,7 +295,6 @@ void PlayScreen(){
 
        q = player.x0;
        e = player.x1;
-
        w = player.y0 - ENTITY_SIZE;
        r = player.y1 - ENTITY_SIZE;
        if(CheckNextWallCollision() == 1){}
@@ -317,7 +315,6 @@ void PlayScreen(){
 
        q = player.x0;
        e = player.x1;
-
        w = player.y0 + ENTITY_SIZE;
        r = player.y1 + ENTITY_SIZE;
        if(CheckNextWallCollision() == 1){}
@@ -338,7 +335,6 @@ void PlayScreen(){
 
        w = player.y0;
        r = player.y1;
-
        q = player.x0 + ENTITY_SIZE;
        e = player.x1 + ENTITY_SIZE;
        if(CheckNextWallCollision() == 1){}
@@ -357,7 +353,7 @@ void PlayScreen(){
      }
 
      TFT_SET_BRUSH(1, player.color, 0,0,0,0);
-     TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
+     TFT_RECTANGLE_Round_Edges(player.x0, player.y0, player.x1, player.y1,10);
 
      //if player has collided with any of the food
      //loop through all the possible food positions, compare to player position
