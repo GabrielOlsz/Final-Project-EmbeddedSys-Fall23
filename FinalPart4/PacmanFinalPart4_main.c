@@ -21,20 +21,22 @@
 void TIMER1_ISR () iv IVT_INT_TIM1_UP {
      TIM1_SR.UIF = 0;               //Reset UIF flag
      
-     /* //Uncomment this section if a game timer is wanted on the MET1155
-     counter++;
-     //split counter into two numbers, ex: 25 will split to 2 and 5 to display on either left or right display
-     leftSide = counter / 10;
-     rightSide = counter % 10;
+//Uncomment this section if a game timer is wanted on the MET1155
+/*
+             counter++;
+             //split counter into two numbers, ex: 25 will split to 2 and 5 to display on either left or right display
+             leftSide = counter / 10;
+             rightSide = counter % 10;
 
-     if(counter >= 99){    //When counter reaches 99 seconds, reset to 0
-         counter = 0;
-     } */
+             if(counter >= 99){    //When counter reaches 99 seconds, reset to 0
+                counter = 0;
+             }
+*/
 }
 
 void TIMER3_ISR () iv IVT_INT_TIM3 {
   TIM3_SR.UIF = 0;               // Reset UIF flag so next interrupt can be recognized when UIF is set
-  GPIOE_ODR.B13 = GPIOE_ODR.B13;
+  GPIOE_ODR.B13 = GPIOE_ODR.B13;  //fix this LED, put it on a different LED that is unoccupied
   //GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER! ALSO TOGGLES LIGHT PE14 based on TIMER SPEED with potentiometer
   gameTick = 1;
 }
@@ -89,6 +91,7 @@ void PlayScreen(){
    }
 
    else{
+     TFT_Set_Pen(CL_BLACK, 1);
      TFT_SET_BRUSH(1, CL_BLACK, 0,0,0,0);
      TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
      switch(JoyStickDir){
@@ -191,10 +194,12 @@ void PlayScreen(){
      if(CheckFoodCollision() == 0){}
      if(CheckFoodCollision() == 1){
        playerScore++;
+       TFT_Rectangle(food[i].x0,food[i].y0,food[i].x1,food[i].y1);
        food[i].x0 = 0;
        food[i].y0 = 0;
-       food[i].x1 = 0;
-       food[i].y1 = 0;
+       food[i].x1 = 1;
+       food[i].y1 = 1;
+       drawFood();
        GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER!
      }
      
@@ -220,9 +225,14 @@ void main() {
          RCC_APB2ENR.IOPEEN = 1;
          drawMap();
 
-        for(;;) {
 
+        for(;;) {
                  PlayScreen();
+                 Seg7Display();
+                 Timer3IntConfiguration();
+                 JoystickUART();
+                 pauseUART();
+                 
                 /*
                  switch(ScreenStateMachine){
                   case 1:
@@ -240,98 +250,8 @@ void main() {
                   break;
                  }  */
 
-
-
-                 Timer3IntConfiguration();
-                 //MET1155********************************************************
-                 leftSide = playerScore / 10;
-                 rightSide = playerScore % 10;
-                 GPIOD_ODR = left7segdisplay[leftSide];  //Use values from TIMER1 Function above to display onto 7 segment with an array
-                 delay_ms(1);                         //Small delay so eyes cannot tell the display is refreshing, if there is no delay then the display gets dim
-                 GPIOD_ODR = right7segdisplay[rightSide];
-                 delay_ms(1);
-                 //****************************************************************
-
-
-                switch(JoyStickDir){
-                     case 2:
-                          for (i = 0; i<11; i++){
-                         while(USART1_SR.TC == 0) {}
-                         USART1_DR = left[i];
-
-                         }
-                           //JoyStickDir = 0;
-                     break;
-
-                     case 4:
-                     for (i = 0; i<11; i++){
-                     while(USART1_SR.TC == 0) {}
-                     USART1_DR = up[i];
-                     }
-                         // JoyStickDir = 0;
-                     break;
-
-                     case 5:
-                          for (i = 0; i<11; i++){
-                         while(USART1_SR.TC == 0) {}
-                         USART1_DR = down[i];
-                         }
-                          //JoyStickDir = 0;
-                     break;
-
-                     case 6:
-                          for (i = 0; i<11; i++){
-                           while(USART1_SR.TC == 0) {}
-                           USART1_DR = right[i];
-                           }
-                         //  JoyStickDir = 0;
-                     break;
-
-//                     case 13:
-//                          for (i = 0; i<11; i++){
-//                       while(USART1_SR.TC == 0) {}
-//                       USART1_DR = click[i];
-//                       }
-//                       JoyStickDir = 0;
-//                     break;
-
-                     default:
-                     //JoyStickDir = 0;
-                     break;
-
-                }
-                //****************************************************************
-
-                if(((USART1_SR & (1<<5))== 0x20)){           //Wait for USART to receive
-                  if (pauseToggle == 0 && (USART1_DR == 'p' || USART1_DR == 'P')){      //If user sends p or P to USART then receive "UNPAUSED"
-                    i = 0;                                                              //USART Terminal must be set ASCII data format
-                    pauseToggle = 1;
-                  }
-
-                  else if(pauseToggle == 1 && (USART1_DR == 'p' || USART1_DR == 'P')){  //If user sends p or P to USART then receive "PAUSED"
-                    i = 2;
-                    pauseToggle = 0;
-
-                 } else if(USART1_DR == 'q' || USART1_DR == 'Q'){      //Objective 2
-                         USART1_DR = counter;
-                 }
-                  for (i = i; i<9; i++){
-                      while(USART1_SR.TC == 0) {}
-                      USART1_DR = unpause[i];              //Prints out unpause/pause in USART
-                  }
-
-                }
-
-
-
-
         }
-
-
 }
-
-
-
 
 
  //**************************************************************************************************
@@ -378,6 +298,19 @@ int CheckFoodCollision(){
     return 0; // No collision
 }
 
+
+void drawFood(){
+//Draw Pellets:
+
+TFT_Set_Pen(CL_YELLOW, 1);
+
+TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
+
+for(i = 0; i < numFood; i++){
+ TFT_Rectangle(food[i].x0,food[i].y0,food[i].x1,food[i].y1);
+}
+
+}
 
 void drawMap(){   //Draws the map (rectangles) and the one ghost in the center
  TFT_Set_Pen(CL_BLUE, 1);
@@ -430,7 +363,15 @@ void drawMap(){   //Draws the map (rectangles) and the one ghost in the center
   TFT_Rectangle_Round_Edges(220, 80, 240, 160, 8); //verticalbox of right T shape
 
 
+//Draw Pellets:
 
+TFT_Set_Pen(CL_YELLOW, 1);
+
+TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
+
+for(i = 0; i < numFood; i++){
+ TFT_Rectangle(food[i].x0,food[i].y0,food[i].x1,food[i].y1);
+}
 
  /*
  // TOP ROW
@@ -614,17 +555,8 @@ TFT_Rectangle(ghostEyes[3].x0,ghostEyes[3].y0,ghostEyes[3].x1,ghostEyes[3].y1);
 
 //*****************
 
-//Draw Pellets:
-
-TFT_Set_Pen(CL_YELLOW, 1);
-
-TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
-
-for(i = 0; i < numFood; i++){
- TFT_Rectangle(food[i].x0,food[i].y0,food[i].x1,food[i].y1);
 }
 
-}
 
 
  void JoyStickConfiguration(){
@@ -865,3 +797,101 @@ void Timer3IntConfiguration(){
         TIM3_DIER.UIE = 1;          // Update interrupt enable
         TIM3_CR1 = 0x0001;          // Enable TIMER3
 }
+
+
+void Seg7Display(){
+  //MET1155********************************************************
+  leftSide = playerScore / 10;
+  rightSide = playerScore % 10;
+  GPIOD_ODR = left7segdisplay[leftSide];  //Use values from TIMER1 Function above to display onto 7 segment with an array
+  delay_ms(1);                         //Small delay so eyes cannot tell the display is refreshing, if there is no delay then the display gets dim
+  GPIOD_ODR = right7segdisplay[rightSide];
+  delay_ms(1);
+  //****************************************************************
+
+}
+
+ void JoystickUART(){
+ switch(JoyStickDir){
+                     case 2:
+                          for (i = 0; i<11; i++){
+                         while(USART1_SR.TC == 0) {}
+                         USART1_DR = left[i];
+
+                         }
+                           //JoyStickDir = 0;
+                     break;
+
+                     case 4:
+                     for (i = 0; i<11; i++){
+                     while(USART1_SR.TC == 0) {}
+                     USART1_DR = up[i];
+                     }
+                         // JoyStickDir = 0;
+                     break;
+
+                     case 5:
+                          for (i = 0; i<11; i++){
+                         while(USART1_SR.TC == 0) {}
+                         USART1_DR = down[i];
+                         }
+                          //JoyStickDir = 0;
+                     break;
+
+                     case 6:
+                          for (i = 0; i<11; i++){
+                           while(USART1_SR.TC == 0) {}
+                           USART1_DR = right[i];
+                           }
+                         //  JoyStickDir = 0;
+                     break;
+
+//                     case 13:
+//                          for (i = 0; i<11; i++){
+//                       while(USART1_SR.TC == 0) {}
+//                       USART1_DR = click[i];
+//                       }
+//                       JoyStickDir = 0;
+//                     break;
+
+                     default:
+                     //JoyStickDir = 0;
+                     break;
+
+                }
+                //****************************************************************
+
+ }
+
+
+void pauseUART(){
+
+  if(((USART1_SR & (1<<5))== 0x20)){           //Wait for USART to receive
+                  if (pauseToggle == 0 && (USART1_DR == 'p' || USART1_DR == 'P')){      //If user sends p or P to USART then receive "UNPAUSED"
+                    i = 0;                                                              //USART Terminal must be set ASCII data format
+                    pauseToggle = 1;
+                  }
+
+                  else if(pauseToggle == 1 && (USART1_DR == 'p' || USART1_DR == 'P')){  //If user sends p or P to USART then receive "PAUSED"
+                    i = 2;
+                    pauseToggle = 0;
+
+                 } else if(USART1_DR == 'q' || USART1_DR == 'Q'){      //Objective 2
+                         USART1_DR = counter;
+                 }
+                  for (i = i; i<9; i++){
+                      while(USART1_SR.TC == 0) {}
+                      USART1_DR = unpause[i];              //Prints out unpause/pause in USART
+                  }
+
+                }
+
+
+}
+
+
+
+
+
+
+

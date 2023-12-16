@@ -16,6 +16,10 @@ int CheckFoodCollision();
 void drawMap();
 int CheckNextWallCollision();
 int CheckFoodCollision();
+void drawFood();
+void Seg7Display();
+void pauseUART();
+void JoystickUART();
 
  #define SIZE 20        //actually acting as pacman size currently
  #define ENTITY_SIZE 5 //acting as how many pixels pacman moves currently - change names eventually
