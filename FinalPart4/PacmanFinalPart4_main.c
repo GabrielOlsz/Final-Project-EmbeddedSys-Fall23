@@ -65,6 +65,7 @@ if((EXTI_PR & 0x0040) == 0x0040){
     }
 }
 
+
 //void JoyStickClick() iv IVT_INT_EXTI15_10{
 //EXTI_PR.B13 = 1;
 //JoyStickDir = 13;
@@ -73,9 +74,179 @@ if((EXTI_PR & 0x0040) == 0x0040){
 
 
 
-void PlayScreen(){
+//MAIN FUNCTION
+void main() {
+         initializeGPIO();            //Enable port clocks
+         adcCONFIG();                 //Configure ADC read
+         InitializeUSART1();          //Configure USART1
+         Timer1Configuration();
+         JoystickConfiguration();
+         Start_TP();
+         ClearScreen();
+         RCC_APB2ENR.IOPEEN = 1;
 
-   if(JoystickDir == 0){ //default, only happens once
+
+
+        for(;;) {
+                 ScreenSwitch();
+//                 PlayScreen();
+                 Seg7Display();
+                 Timer3IntConfiguration();
+                 JoystickUART();
+                 pauseUART();
+
+
+        }
+}
+
+// UP = 4, DOWN = 5, LEFT = 2 RIGHT = 6
+void TitleScreen(){
+
+    if(JoyStickDir == 0){
+     //Draw Title Screen Once
+    TFT_WRITE_TEXT("PACMAN GAME MADE BY GABE,ALEX,ANTHONY 2023", 10,220);
+     
+    }
+    if(JoyStickDir == 4){ //Press Joystick up
+      ScreenStateMachine = 1; //Play Game
+      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+    }
+    if(JoyStickDir == 5){ //Press Joystick down
+      ScreenStateMachine = 2; //High Score Screen
+      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+    }
+    if(JoyStickDir == 2){ //Press Joystick Left
+      ScreenStateMachine = 3; //How To Screen
+      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+    }
+    else{}
+
+}
+
+void ScreenSwitch(){
+
+     switch(ScreenStateMachine){
+      case 1:
+        PlayScreen();
+        break;
+
+      case 2:
+        HighScoreScreen();
+        break;
+
+      case 3:
+        HowtoScreen();
+        break;
+
+      case 4:
+        GameOverScreen();
+        break;
+
+      case 5:
+        VictoryScreen();
+
+      default:
+        TitleScreen();
+        break;
+   }
+
+}
+
+
+void VictoryScreen(){
+
+}
+
+void GameOverScreen(){
+
+ }
+
+void HighScoreScreen(){
+
+ }
+
+
+void HowtoScreen(){
+
+}
+
+
+void ClearScreen(){
+  TFT_Set_Pen(CL_BlUE,1);
+  TFT_Set_Brush(1,CL_BLUE,0,0,0,0);
+  TFT_RECTANGLE(0,0,320,240);
+  TFT_SET_PEN(CL_BLACK,1);
+  TFT_SET_BRUSH(1,CL_BLACK,0,0,0,0);
+  TFT_RECTANGLE(1,1,319,239);
+  TFT_SET_FONT(TFT_defaultFont, CL_RED, FO_HORIZONTAL);
+
+}
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+ //**************************************************************************************************
+
+
+int CheckWallCollision(){
+    for(i = 0; i < numWalls; i++){
+        if((player.x0 < walls[i].x1) && (player.x1 > walls[i].x0) && (player.y0 < walls[i].y1) && (player.y1 > walls[i].y0)){
+            return 1; // Collision
+        }
+    }
+    return 0; // No collision
+}
+
+int CheckNextWallCollision(){
+    for(i = 0; i < numWalls; i++){
+        if((q < walls[i].x1) && (e > walls[i].x0) && (w < walls[i].y1) && (r > walls[i].y0)){
+            return 1; // Collision
+        }
+    }
+    return 0; // No collision
+}
+
+int CheckFoodCollision(){
+    for(i = 0; i < numFood; i++){
+        if((player.x0 < food[i].x1) && (player.x1 > food[i].x0) && (player.y0 < food[i].y1) && (player.y1 > food[i].y0)){
+            return 1; // Collision
+        }
+    }
+    return 0; // No collision
+}
+
+
+void drawFood(){
+//Draw Pellets:
+
+TFT_Set_Pen(CL_YELLOW, 1);
+
+TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
+
+for(i = 0; i < numFood; i++){
+ TFT_Rectangle(food[i].x0,food[i].y0,food[i].x1,food[i].y1);
+}
+
+}
+
+void PlayScreen(){
+     
+    if(mapVar == 0){ //Used to only draw the map once, otherwise Screen will constantly refresh
+     drawMap();
+     mapVar = 1;
+    }
+
+   if(JoyStickDir == 0){ //default, only happens once
      player.x0 = 151;
      player.x1 = player.x0 + SIZE;
      player.y0 = 163;
@@ -202,7 +373,7 @@ void PlayScreen(){
        drawFood();
        GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER!
      }
-     
+
 
      //if player has collided with a ghost
      //if yes, end the game
@@ -212,105 +383,6 @@ void PlayScreen(){
      gameTick = 0;
      }
  }
-
-//MAIN FUNCTION
-void main() {
-         initializeGPIO();            //Enable port clocks
-         adcCONFIG();                 //Configure ADC read
-         InitializeUSART1();          //Configure USART1
-         Timer1Configuration();
-         JoystickConfiguration();
-         Start_TP();
-         ClearScreen();
-         RCC_APB2ENR.IOPEEN = 1;
-         drawMap();
-
-
-        for(;;) {
-                 PlayScreen();
-                 Seg7Display();
-                 Timer3IntConfiguration();
-                 JoystickUART();
-                 pauseUART();
-                 
-                /*
-                 switch(ScreenStateMachine){
-                  case 1:
-                  PlayScreen();
-                  GameOverScreen();
-                  break;
-                  case 2:
-                  HighScoreScreen();
-                  case 3:
-                  HowtoScreen();
-                  break;
-
-                  default:
-                  TitleScreen();
-                  break;
-                 }  */
-
-        }
-}
-
-
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
-
-
-int CheckWallCollision(){
-    for(i = 0; i < numWalls; i++){
-        if((player.x0 < walls[i].x1) && (player.x1 > walls[i].x0) && (player.y0 < walls[i].y1) && (player.y1 > walls[i].y0)){
-            return 1; // Collision
-        }
-    }
-    return 0; // No collision
-}
-
-int CheckNextWallCollision(){
-    for(i = 0; i < numWalls; i++){
-        if((q < walls[i].x1) && (e > walls[i].x0) && (w < walls[i].y1) && (r > walls[i].y0)){
-            return 1; // Collision
-        }
-    }
-    return 0; // No collision
-}
-
-int CheckFoodCollision(){
-    for(i = 0; i < numFood; i++){
-        if((player.x0 < food[i].x1) && (player.x1 > food[i].x0) && (player.y0 < food[i].y1) && (player.y1 > food[i].y0)){
-            return 1; // Collision
-        }
-    }
-    return 0; // No collision
-}
-
-
-void drawFood(){
-//Draw Pellets:
-
-TFT_Set_Pen(CL_YELLOW, 1);
-
-TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
-
-for(i = 0; i < numFood; i++){
- TFT_Rectangle(food[i].x0,food[i].y0,food[i].x1,food[i].y1);
-}
-
-}
 
 void drawMap(){   //Draws the map (rectangles) and the one ghost in the center
  TFT_Set_Pen(CL_BLUE, 1);
@@ -373,174 +445,8 @@ for(i = 0; i < numFood; i++){
  TFT_Rectangle(food[i].x0,food[i].y0,food[i].x1,food[i].y1);
 }
 
- /*
- // TOP ROW
- TFT_Rectangle(8, 12, 12, 16);
 
- TFT_Rectangle(38, 12, 42, 16);
-
- TFT_Rectangle(68, 12, 72, 16);
-
- TFT_Rectangle(98, 12, 102, 16);
-
- TFT_Rectangle(128, 12, 132, 16);
-
- TFT_Rectangle(158, 12, 162, 16);
-
- TFT_Rectangle(188, 12, 192, 16);
-
- TFT_Rectangle(218, 12, 222, 16);
-
- TFT_Rectangle(248, 12, 252, 16);
-
- TFT_Rectangle(278, 12, 282, 16);
-
- TFT_Rectangle(308, 12, 312, 16);
-
-
-
-//BOTTOM ROW
-TFT_Rectangle(8, 224, 12, 228);
-
- TFT_Rectangle(38, 224, 42, 228);
-
- TFT_Rectangle(68, 224, 72, 228);
-
- TFT_Rectangle(98, 224, 102, 228);
-
- TFT_Rectangle(128, 224, 132, 228);
-
- TFT_Rectangle(158, 224, 162, 228);
-
- TFT_Rectangle(188, 224, 192, 228);
-
- TFT_Rectangle(218, 224, 222, 228);
-
- TFT_Rectangle(248, 224, 252, 228);
-
- TFT_Rectangle(278, 224, 282, 228);
-
- TFT_Rectangle(308, 224, 312, 228);
-
-
- //LEFT BORDER
-
-TFT_Rectangle(8, 42, 12, 46);
-
-TFT_Rectangle(8, 72, 12, 76);
-
-//TFT_Rectangle(8, 98, 12, 102);
-
-//TFT_Rectangle(8, 128, 12, 132);
-
-TFT_Rectangle(8, 162, 12, 166);
-
-TFT_Rectangle(8, 192, 12, 196);
-
-
-//RIGHT BORDER
-
-TFT_Rectangle(308, 42, 312, 46);
-
-TFT_Rectangle(308, 72, 312, 76);
-
-//TFT_Rectangle(308, 98, 312, 102);
-
-//TFT_Rectangle(308, 128, 312, 132);
-
-TFT_Rectangle(308, 162, 312, 166);
-
-TFT_Rectangle(308, 192, 312, 196);
-
-//SECOND COLUMN
-
-TFT_Rectangle(38, 98, 42, 102);
-
-TFT_Rectangle(38, 122, 42, 126);
-
-TFT_Rectangle(38, 144, 42, 148);
-
-//THIRD COLUMN
-
-TFT_Rectangle(68, 68, 72, 72);
-
-TFT_Rectangle(68, 98, 72,102);
-
-TFT_Rectangle(68, 144, 72, 148);
-
-TFT_Rectangle(68, 174, 72, 178);
-
-
-
-TFT_Rectangle(88, 68, 92, 72);
-
-TFT_Rectangle(88, 174, 92, 178);
-
-//FOURTH COLUMN
-
-TFT_Rectangle(116, 38, 120, 42);
-
-TFT_Rectangle(116, 68, 120, 72);
-
-TFT_Rectangle(116, 98, 120, 102);
-
-TFT_Rectangle(116, 128, 120, 132);
-
-TFT_Rectangle(116, 158, 120, 162);
-
-TFT_Rectangle(116, 180, 120, 184);
-
-TFT_Rectangle(116, 204, 120, 208);
-
-
-TFT_Rectangle(142, 68, 146, 72);
-
-TFT_Rectangle(172, 68, 176, 72);
-
-
-
-//FIFTH COLUMN
-
-TFT_Rectangle(200, 38, 204, 42);
-
-TFT_Rectangle(200, 68, 204, 72);
-
-TFT_Rectangle(200, 98, 204, 102);
-
-TFT_Rectangle(200, 128, 204, 132);
-
-TFT_Rectangle(200, 158, 204, 162);
-
-TFT_Rectangle(200, 180, 204, 184);
-
-TFT_Rectangle(200, 204, 204, 208);
-
-
-//SIXTH COLUMN
-
-TFT_Rectangle(252, 68, 256, 72);
-
-TFT_Rectangle(252, 98, 256, 102);
-
-TFT_Rectangle(252, 144, 256, 148);
-
-TFT_Rectangle(252, 174, 256, 178);
-
-TFT_Rectangle(228, 68, 232, 72);
-
-TFT_Rectangle(228, 174, 232, 178);
-
-//SEVENTH COLUMN
-
-TFT_Rectangle(278, 98, 282, 102);
-
-TFT_Rectangle(278, 122, 282, 126);
-
-TFT_Rectangle(278, 144, 282, 148);
-
-*/
-
-//ghost test ******
+//Draw ghost
 TFT_Set_Pen(CL_FUCHSIA, 1);
 TFT_Set_Brush(1, CL_FUCHSIA, 0, 0, 0, 0);
 TFT_Rectangle_Round_Edges(ghosts[0].x0,ghosts[0].y0,ghosts[0].x1,ghosts[0].y1, 5);
@@ -553,7 +459,6 @@ TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
 TFT_Rectangle(ghostEyes[2].x0,ghostEyes[2].y0,ghostEyes[2].x1,ghostEyes[2].y1);
 TFT_Rectangle(ghostEyes[3].x0,ghostEyes[3].y0,ghostEyes[3].x1,ghostEyes[3].y1);
 
-//*****************
 
 }
 

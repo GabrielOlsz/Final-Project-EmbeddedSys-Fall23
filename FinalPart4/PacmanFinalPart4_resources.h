@@ -21,6 +21,16 @@ void Seg7Display();
 void pauseUART();
 void JoystickUART();
 
+//Screen Functions
+void ScreenSwitch();
+void VictoryScreen();
+void ClearScreen();
+void PlayScreen();
+void GameOverScreen();
+void HighScoreScreen();
+void TitleScreen();
+void HowtoScreen();
+
  #define SIZE 20        //actually acting as pacman size currently
  #define ENTITY_SIZE 5 //acting as how many pixels pacman moves currently - change names eventually
  #define BORDER_X 320
@@ -83,3 +93,4 @@ unsigned long int q = 0;
 unsigned long int w = 0;
 unsigned long int e = 0;
 unsigned long int r = 0;
+unsigned long int mapVar = 0;
