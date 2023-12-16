@@ -20,15 +20,16 @@
 //INTERRUPT SERVICE ROUTINES
 void TIMER1_ISR () iv IVT_INT_TIM1_UP {
      TIM1_SR.UIF = 0;               //Reset UIF flag
+     
+     /* //Uncomment this section if a game timer is wanted on the MET1155
      counter++;
-
      //split counter into two numbers, ex: 25 will split to 2 and 5 to display on either left or right display
      leftSide = counter / 10;
      rightSide = counter % 10;
 
      if(counter >= 99){    //When counter reaches 99 seconds, reset to 0
          counter = 0;
-     }
+     } */
 }
 
 void TIMER3_ISR () iv IVT_INT_TIM3 {
@@ -98,7 +99,7 @@ void PlayScreen(){
 
        w = player.y0;
        r = player.y1;
-       
+
        q = player.x0 - ENTITY_SIZE;
        e = player.x1 - ENTITY_SIZE;
        if(CheckNextWallCollision() == 1){}
@@ -109,17 +110,17 @@ void PlayScreen(){
          }
        }
      else{} //Collides with left edge of the screen
-     
+
      break;
 
      case 4: //UP
      //Check if player has collided with anything
        if(CheckWallCollision() == 1){}
        if(CheckWallCollision() == 0){
-     
+
        q = player.x0;
        e = player.x1;
-       
+
        w = player.y0 - ENTITY_SIZE;
        r = player.y1 - ENTITY_SIZE;
        if(CheckNextWallCollision() == 1){}
@@ -136,7 +137,7 @@ void PlayScreen(){
      //Check if player has collided with anything
        if(CheckWallCollision() == 1){}
        if(CheckWallCollision() == 0){
-      
+
        q = player.x0;
        e = player.x1;
 
@@ -156,7 +157,7 @@ void PlayScreen(){
      //Check if player has collided with anything
        if(CheckWallCollision() == 1){}
        if(CheckWallCollision() == 0){
-     
+
        w = player.y0;
        r = player.y1;
 
@@ -171,23 +172,32 @@ void PlayScreen(){
        }
      else{}
      break;
-     
+
      default:
      break;
      }
 
      TFT_SET_BRUSH(1, player.color, 0,0,0,0);
      TFT_RECTANGLE(player.x0, player.y0, player.x1, player.y1);
-    
+
      //if player has collided with any of the food
      //if yes, check if food is visibile, if yes, increase score, set visibility to 0
      //loop through all the possible food positions, compare to player position
+     if(CheckFoodCollision() == 0){}
+     if(CheckFoodCollision() == 1){
+       playerScore++;
+       food[i].x0 = 0;
+       food[i].y0 = 0;
+       food[i].x1 = 0;
+       food[i].y1 = 0;
+     }
      
-     
+
+
      //if player has collided with a ghost
      //if yes, end the game
      //loop through all the possible ghost positions, compare to player position
-    
+
      while(gameTick == 0){};
      gameTick = 0;
      }
@@ -219,7 +229,7 @@ void main() {
                   case 3:
                   HowtoScreen();
                   break;
-                  
+
                   default:
                   TitleScreen();
                   break;
@@ -229,6 +239,8 @@ void main() {
 
                  Timer3IntConfiguration();
                  //MET1155********************************************************
+                 leftSide = playerScore / 10;
+                 rightSide = playerScore % 10;
                  GPIOD_ODR = left7segdisplay[leftSide];  //Use values from TIMER1 Function above to display onto 7 segment with an array
                  delay_ms(1);                         //Small delay so eyes cannot tell the display is refreshing, if there is no delay then the display gets dim
                  GPIOD_ODR = right7segdisplay[rightSide];
@@ -310,6 +322,7 @@ void main() {
 
         }
 
+
 }
 
 
@@ -345,6 +358,15 @@ int CheckWallCollision(){
 int CheckNextWallCollision(){
     for(i = 0; i < numWalls; i++){
         if((q < walls[i].x1) && (e > walls[i].x0) && (w < walls[i].y1) && (r > walls[i].y0)){
+            return 1; // Collision
+        }
+    }
+    return 0; // No collision
+}
+
+int CheckFoodCollision(){
+    for(i = 0; i < numFood; i++){
+        if((player.x0 < food[i].x1) && (player.x1 > food[i].x0) && (player.y0 < food[i].y1) && (player.y1 > food[i].y0)){
             return 1; // Collision
         }
     }
@@ -395,6 +417,40 @@ void drawMap(){
   TFT_Rectangle_Round_Edges(220, 110, 270, 130, 8);
 
   TFT_Rectangle_Round_Edges(220, 80, 240, 160, 8); //verticalbox of right T shape
+
+
+//Draw Pellets:
+
+TFT_Set_Pen(CL_YELLOW, 1);
+
+TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
+
+ // TOP ROW
+ TFT_Rectangle(8, 12, 12, 16);
+
+ TFT_Rectangle(38, 12, 42, 16);
+
+ TFT_Rectangle(68, 12, 72, 16);
+
+ TFT_Rectangle(98, 12, 102, 16);
+
+ TFT_Rectangle(128, 12, 132, 16);
+
+ TFT_Rectangle(158, 12, 162, 16);
+
+ TFT_Rectangle(188, 12, 192, 16);
+
+ TFT_Rectangle(218, 12, 222, 16);
+
+ TFT_Rectangle(248, 12, 252, 16);
+
+ TFT_Rectangle(278, 12, 282, 16);
+
+ TFT_Rectangle(308, 12, 312, 16);
+//{{8, 12, 12, 16}, {38, 12, 42, 16}, {68, 12, 72, 16}, {98, 12, 102, 16}, {128, 12, 132, 16}, {158, 12, 162, 16}, {188, 12, 192, 16}, {218, 12, 222, 1}, {248, 12, 252, 16}, {278, 12, 282, 16}, {308, 12, 312, 16}};
+
+
+
 }
 
 
@@ -449,7 +505,7 @@ void initializeGPIO(){
 
            GPIOD_CRL = 0x44444444; //SETS GPIOD LOW as input
            GPIOD_CRH = 0x33333333; //SETS GPIOD HIGH as input
-           GPIOD_ODR = 0;
+
 
            adcCONFIG();
            InitializeUSART1();                // Call sub function to initialize USART1
