@@ -374,7 +374,7 @@ int CheckFoodCollision(){
 }
 
 
-void drawMap(){
+void drawMap(){   //Draws the map (rectangles) and bits (food)
  TFT_Set_Pen(CL_BLUE, 1);
 
   TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
@@ -408,8 +408,14 @@ void drawMap(){
 
   TFT_Rectangle_Round_Edges(50, 110, 100, 130, 8);
 
-  TFT_Rectangle_Round_Edges(130, 80, 190, 160, 8); //center box
-
+  //Center box split in 2
+  TFT_Rectangle_Round_Edges(130, 80, 190, 108, 8); //upper center box
+                                          //110
+  TFT_Rectangle_Round_Edges(130, 132, 190, 160, 8); //lower center box
+                                //130
+  //TFT_Rectangle_Round_Edges(130, 80, 190, 160, 8); //original big center box
+                           // {150, 110, 170, 130}
+                            
   TFT_Rectangle_Round_Edges(80, 80, 100, 160, 8); //vertical box of left T shape
 
   TFT_Rectangle_Round_Edges(300, 110, 320, 130, 4);
@@ -425,7 +431,11 @@ TFT_Set_Pen(CL_YELLOW, 1);
 
 TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
 
- // TOP ROW
+TFT_Set_Pen(CL_YELLOW, 1);
+
+TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
+
+// TOP ROW
  TFT_Rectangle(8, 12, 12, 16);
 
  TFT_Rectangle(38, 12, 42, 16);
@@ -447,9 +457,144 @@ TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
  TFT_Rectangle(278, 12, 282, 16);
 
  TFT_Rectangle(308, 12, 312, 16);
-//{{8, 12, 12, 16}, {38, 12, 42, 16}, {68, 12, 72, 16}, {98, 12, 102, 16}, {128, 12, 132, 16}, {158, 12, 162, 16}, {188, 12, 192, 16}, {218, 12, 222, 1}, {248, 12, 252, 16}, {278, 12, 282, 16}, {308, 12, 312, 16}};
 
 
+
+//BOTTOM ROW
+TFT_Rectangle(8, 224, 12, 228);
+
+ TFT_Rectangle(38, 224, 42, 228);
+
+ TFT_Rectangle(68, 224, 72, 228);
+
+ TFT_Rectangle(98, 224, 102, 228);
+
+ TFT_Rectangle(128, 224, 132, 228);
+
+ TFT_Rectangle(158, 224, 162, 228);
+
+ TFT_Rectangle(188, 224, 192, 228);
+
+ TFT_Rectangle(218, 224, 222, 228);
+
+ TFT_Rectangle(248, 224, 252, 228);
+
+ TFT_Rectangle(278, 224, 282, 228);
+
+ TFT_Rectangle(308, 224, 312, 228);
+
+
+ //LEFT BORDER
+
+TFT_Rectangle(8, 42, 12, 46);
+
+TFT_Rectangle(8, 72, 12, 76);
+
+//TFT_Rectangle(8, 98, 12, 102);
+
+//TFT_Rectangle(8, 128, 12, 132);
+
+TFT_Rectangle(8, 162, 12, 166);
+
+TFT_Rectangle(8, 192, 12, 196);
+
+
+//RIGHT BORDER
+
+TFT_Rectangle(308, 42, 312, 46);
+
+TFT_Rectangle(308, 72, 312, 76);
+
+//TFT_Rectangle(308, 98, 312, 102);
+
+//TFT_Rectangle(308, 128, 312, 132);
+
+TFT_Rectangle(308, 162, 312, 166);
+
+TFT_Rectangle(308, 192, 312, 196);
+
+//SECOND COLUMN
+
+TFT_Rectangle(38, 86, 42, 90);
+
+TFT_Rectangle(38, 116, 42, 120);
+
+TFT_Rectangle(38, 146, 42, 150);
+
+//THIRD COLUMN
+
+TFT_Rectangle(68, 68, 72, 72);
+
+TFT_Rectangle(68, 98, 72,102);
+
+TFT_Rectangle(68, 148, 72, 152);
+
+TFT_Rectangle(68, 178, 72, 182);
+
+//FOURTH COLUMN
+
+TFT_Rectangle(116, 42, 120, 46);
+
+TFT_Rectangle(116, 72, 120, 76);
+
+TFT_Rectangle(116, 102, 120, 106);
+
+TFT_Rectangle(116, 132, 120, 136);
+
+TFT_Rectangle(116, 162, 120, 166);
+
+TFT_Rectangle(116, 192, 120, 196);
+
+
+//FIFTH COLUMN
+
+TFT_Rectangle(200, 42, 204, 46);
+
+TFT_Rectangle(200, 72, 204, 76);
+
+TFT_Rectangle(200, 102, 204, 106);
+
+TFT_Rectangle(200, 132, 204, 136);
+
+TFT_Rectangle(200, 162, 204, 166);
+
+TFT_Rectangle(200, 192, 204, 196);
+
+TFT_Rectangle(200, 42, 204, 46);
+
+//SIXTH COLUMN
+
+TFT_Rectangle(252, 68, 256, 72);
+
+TFT_Rectangle(252, 98, 256, 102);
+
+TFT_Rectangle(252, 148, 256, 152);
+
+TFT_Rectangle(252, 178, 256, 182);
+
+//SEVENTH COLUMN
+
+TFT_Rectangle(278, 86, 282, 90);
+
+TFT_Rectangle(278, 116, 282, 120);
+
+TFT_Rectangle(278, 146, 282, 150);
+
+
+//ghost test ******
+TFT_Set_Pen(CL_FUCHSIA, 1);
+TFT_Set_Brush(1, CL_FUCHSIA, 0, 0, 0, 0);
+TFT_Rectangle_Round_Edges(ghosts[0].x0,ghosts[0].y0,ghosts[0].x1,ghosts[0].y1, 5);
+TFT_Set_Pen(CL_WHITE, 1);
+TFT_Set_Brush(1, CL_WHITE, 0, 0, 0, 0);
+TFT_Rectangle(ghostEyes[0].x0,ghostEyes[0].y0,ghostEyes[0].x1,ghostEyes[0].y1);
+TFT_Rectangle(ghostEyes[1].x0,ghostEyes[1].y0,ghostEyes[1].x1,ghostEyes[1].y1);
+TFT_Set_Pen(CL_BLACK, 1);
+TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
+TFT_Rectangle(ghostEyes[2].x0,ghostEyes[2].y0,ghostEyes[2].x1,ghostEyes[2].y1);
+TFT_Rectangle(ghostEyes[3].x0,ghostEyes[3].y0,ghostEyes[3].x1,ghostEyes[3].y1);
+
+//*****************
 
 }
 
