@@ -29,6 +29,7 @@ void PlayScreen();
 void GameOverScreen();
 void HighScoreScreen();
 void TitleScreen();
+void HowToPlay();
 
  #define SIZE 20        //actually acting as pacman size currently
  #define ENTITY_SIZE 5 //acting as how many pixels pacman moves currently - change names eventually
@@ -39,6 +40,9 @@ void TitleScreen();
  #define numWalls 22
  #define numFood 65
  #define ghostNum 1
+ #define numHomeGhosts 1
+ #define numHomeGhostEyes numHomeGhosts*4
+ #define numGhostLegs numHomeGhosts*3
 
  struct EntityProperties{
         int x0;
@@ -58,7 +62,11 @@ void TitleScreen();
  
  
 
-struct EntityProperties player;
+struct EntityProperties player;              //(50, 113, 70, 128)
+struct Entities homeghosts[numHomeGhosts] = { {50, 113, 90, 160}     };
+struct Entities homeghosteyes[numHomeGhostEyes] = { {60, 125}, {80, 125}, {62, 125}, {82, 125} };
+//struct Entities homeghosteyes[numHomeGhostEyes] = {{56,117,66,120}, {63, 117, 68, 120}, {53,121,58,124}, {63, 121, 68, 124}  };
+//struct Entities ghostLegs[numGhostLegs] = {   };
 struct Entities ghosts[ghostNum] = {{150, 113, 170, 128}};     //{153,117,158,124}, {163, 117, 168, 124}
 struct Entities ghostEyes[ghostNum*4] = {{153,117,158,120}, {163, 117, 168, 120}, {153,120,158,124}, {163, 120, 168, 124}};
 struct Entities food[numFood] = {{8, 12, 12, 16}, {38, 12, 42, 16}, {68, 12, 72, 16}, {98, 12, 102, 16}, {128, 12, 132, 16}, {158, 12, 162, 16}, {188, 12, 192, 16}, {218, 12, 222, 16}, {248, 12, 252, 16}, {278, 12, 282, 16}, {308, 12, 312, 16}, {8, 224, 12, 228}, {38, 224, 42, 228}, {68, 224, 72, 228}, {98, 224, 102, 228}, {128, 224, 132, 228}, {158, 224, 162, 228}, {188, 224, 192, 228}, {218, 224, 222, 228}, {248, 224, 252, 228}, {278, 224, 282, 228}, {308, 224, 312, 228}, {8, 42, 12, 46}, {8, 72, 12, 76}, {8, 162, 12, 166}, {8, 192, 12, 196}, {308, 42, 312, 46}, {308, 72, 312, 76},  {308, 98, 312, 102}, {308, 162, 312, 166}, {308, 192, 312, 196}, {38, 98, 42, 102}, {38, 122, 42, 126}, {38, 144, 42, 148}, {68, 68, 72, 72}, {68, 98, 72, 102}, {68, 144, 72, 148}, {68, 174, 72, 178}, {88, 68, 92, 72}, {88, 174, 92, 178}, {116, 38, 120, 42}, {116, 68, 120, 72}, {116, 98, 120, 102}, {116, 128, 120, 132}, {116, 158, 120, 162}, {116, 180, 120, 184}, {116, 204, 120, 208}, {142, 68, 146, 72}, {172, 68, 176, 72},{200, 38, 204, 42}, {200, 68, 204, 72}, {200, 98, 204, 102}, {200, 128, 204, 132},  {200, 158, 204, 162}, {200, 180, 204, 184}, {200, 204, 204, 208}, {252, 68, 256, 72}, {252, 98, 256, 102}, {252, 144, 256, 148}, {252, 174, 256, 178}, {228, 68, 232, 72}, {228, 174, 232, 178}, {278, 98, 282, 102}, {278, 122, 282, 126}, {278, 144, 282, 148}};

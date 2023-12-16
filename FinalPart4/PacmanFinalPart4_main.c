@@ -108,10 +108,70 @@ void TitleScreen(){
     TFT_Rectangle(0,0, 319, 239); //outline rectangle
     TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
     TFT_WRITE_TEXT("PAC-MAN  MADE BY GABE, ALEX, ANTHONY 2023", 15,220);
-//    TFT_Set_Brush(1, CL_BLUE, 0, 0, 0, 0);
+    TFT_WRITE_TEXT("PAC-MAN", 140,40);
+    TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
+    TFT_WRITE_TEXT("Start Game (Up)", 120,110);
+    TFT_WRITE_TEXT("High Scores (Down)", 110,130);
+    TFT_WRITE_TEXT("How to Play (Right)", 112,150);
+
+    //Loop for drawing ghost bodies
+    TFT_Set_Pen(CL_FUCHSIA, 1);
+    TFT_Set_Brush(1, CL_FUCHSIA, 0, 0, 0, 0);
+    for(i = 0; i<numHomeGhosts; i++){
+      TFT_Rectangle_Round_Edges(homeghosts[i].x0,homeghosts[i].y0,homeghosts[i].x1,homeghosts[i].y1, 15);
+    }
+
+    //Loop for drawing ghost legs
+    for(i = 0; i < numHomeGhostEyes; i++){
+      if(i < numHomeGhostEyes/2){
+      TFT_Set_Pen(CL_WHITE, 1);
+      TFT_Set_Brush(1, CL_WHITE, 0, 0, 0, 0);
+      TFT_Circle(homeghosteyes[i].x0, homeghosteyes[i].y0, 5);
+      }
+      else{
+      TFT_Set_Pen(CL_BLACK, 1);
+      TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
+      TFT_Circle(homeghosteyes[i].x0, homeghosteyes[i].y0, 2);
+    }
+    }
+    
+/*
+    //Loops for drawing ghosts rectangle eyes
+    for(i = 0; i< numHomeGhostEyes; i++){
+      if(i < numHomeGhostEyes/2){
+      TFT_Set_Pen(CL_WHITE, 1);
+      TFT_Set_Brush(1, CL_WHITE, 0, 0, 0, 0);
+      TFT_Rectangle(homeghosteyes[i].x0,homeghosteyes[i].y0,homeghosteyes[i].x1,homeghosteyes[i].y1);
+      }
+      else{
+      //if(i > numHomeGhostEyes){
+      TFT_Set_Pen(CL_BLACK, 1);
+      TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
+      TFT_Rectangle(homeghosteyes[i].x0,homeghosteyes[i].y0,homeghosteyes[i].x1,homeghosteyes[i].y1);
+      }
+    }
+*/
+
+
 
     JoyStickDir = 1;
     }
+    
+ /*
+ //Draw ghost
+TFT_Set_Pen(CL_FUCHSIA, 1);
+TFT_Set_Brush(1, CL_FUCHSIA, 0, 0, 0, 0);
+TFT_Rectangle_Round_Edges(ghosts[0].x0,ghosts[0].y0,ghosts[0].x1,ghosts[0].y1, 5);
+TFT_Set_Pen(CL_WHITE, 1);
+TFT_Set_Brush(1, CL_WHITE, 0, 0, 0, 0);
+TFT_Rectangle(ghostEyes[0].x0,ghostEyes[0].y0,ghostEyes[0].x1,ghostEyes[0].y1);
+TFT_Rectangle(ghostEyes[1].x0,ghostEyes[1].y0,ghostEyes[1].x1,ghostEyes[1].y1);
+TFT_Set_Pen(CL_BLACK, 1);
+TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
+TFT_Rectangle(ghostEyes[2].x0,ghostEyes[2].y0,ghostEyes[2].x1,ghostEyes[2].y1);
+TFT_Rectangle(ghostEyes[3].x0,ghostEyes[3].y0,ghostEyes[3].x1,ghostEyes[3].y1);
+*/
+    
     if(JoyStickDir == 4){ //Press Joystick up
       ScreenStateMachine = 1; //Play Game
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
@@ -121,12 +181,17 @@ void TitleScreen(){
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
     }
     if(JoyStickDir == 2){ //Press Joystick Left
-      ScreenStateMachine = 3; //How To Screen
+      ScreenStateMachine = 3; //Victory Screen
+      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+    }
+    if(JoyStickDir == 6){ //Press Joystick Right
+      ScreenStateMachine = 5; //How To Play Screen
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
     }
     else{}
 
 }
+
 
 void ScreenSwitch(){
 
@@ -147,6 +212,10 @@ void ScreenSwitch(){
         GameOverScreen();
         break;
 
+      case 5:
+        HowToPlay();
+        break;
+
       default:
         TitleScreen();
         break;
@@ -156,6 +225,10 @@ void ScreenSwitch(){
 
 
 void VictoryScreen(){
+
+}
+
+void HowToPlay(){
 
 }
 
@@ -454,7 +527,6 @@ TFT_Set_Pen(CL_BLACK, 1);
 TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
 TFT_Rectangle(ghostEyes[2].x0,ghostEyes[2].y0,ghostEyes[2].x1,ghostEyes[2].y1);
 TFT_Rectangle(ghostEyes[3].x0,ghostEyes[3].y0,ghostEyes[3].x1,ghostEyes[3].y1);
-
 
 }
 
