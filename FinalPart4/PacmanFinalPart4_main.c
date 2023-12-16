@@ -34,7 +34,8 @@ void TIMER1_ISR () iv IVT_INT_TIM1_UP {
 
 void TIMER3_ISR () iv IVT_INT_TIM3 {
   TIM3_SR.UIF = 0;               // Reset UIF flag so next interrupt can be recognized when UIF is set
-  GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER! ALSO TOGGLES LIGHT PE14 based on TIMER SPEED with potentiometer
+  GPIOE_ODR.B13 = GPIOE_ODR.B13;
+  //GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER! ALSO TOGGLES LIGHT PE14 based on TIMER SPEED with potentiometer
   gameTick = 1;
 }
 
@@ -107,6 +108,7 @@ void PlayScreen(){
          //Move the player
          player.x0 -= ENTITY_SIZE;
          player.x1 -= ENTITY_SIZE;
+         GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER!
          }
        }
      else{} //Collides with left edge of the screen
@@ -128,6 +130,7 @@ void PlayScreen(){
          //Move the player
          player.y0 -= ENTITY_SIZE;
          player.y1 -= ENTITY_SIZE;
+         GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER!
          }
        }
      else{}
@@ -148,6 +151,7 @@ void PlayScreen(){
          //Move the player
          player.y0 += ENTITY_SIZE;
          player.y1 += ENTITY_SIZE;
+         GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER!
          }
        }
      else{}
@@ -168,6 +172,7 @@ void PlayScreen(){
          //Move the player
          player.x0 += ENTITY_SIZE;
          player.x1 += ENTITY_SIZE;
+         GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER!
          }
        }
      else{}
@@ -190,9 +195,9 @@ void PlayScreen(){
        food[i].y0 = 0;
        food[i].x1 = 0;
        food[i].y1 = 0;
+       GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER!
      }
      
-
 
      //if player has collided with a ghost
      //if yes, end the game
@@ -415,7 +420,7 @@ void drawMap(){   //Draws the map (rectangles) and bits (food)
                                 //130
   //TFT_Rectangle_Round_Edges(130, 80, 190, 160, 8); //original big center box
                            // {150, 110, 170, 130}
-                            
+
   TFT_Rectangle_Round_Edges(80, 80, 100, 160, 8); //vertical box of left T shape
 
   TFT_Rectangle_Round_Edges(300, 110, 320, 130, 4);
@@ -426,10 +431,6 @@ void drawMap(){   //Draws the map (rectangles) and bits (food)
 
 
 //Draw Pellets:
-
-TFT_Set_Pen(CL_YELLOW, 1);
-
-TFT_Set_Brush(1, CL_YELLOW, 0, 0, 0, 0);
 
 TFT_Set_Pen(CL_YELLOW, 1);
 
@@ -515,11 +516,11 @@ TFT_Rectangle(308, 192, 312, 196);
 
 //SECOND COLUMN
 
-TFT_Rectangle(38, 86, 42, 90);
+TFT_Rectangle(38, 98, 42, 102);
 
-TFT_Rectangle(38, 116, 42, 120);
+//TFT_Rectangle(38, 118, 42, 122);
 
-TFT_Rectangle(38, 146, 42, 150);
+TFT_Rectangle(38, 144, 42, 148);
 
 //THIRD COLUMN
 
@@ -527,40 +528,48 @@ TFT_Rectangle(68, 68, 72, 72);
 
 TFT_Rectangle(68, 98, 72,102);
 
-TFT_Rectangle(68, 148, 72, 152);
+TFT_Rectangle(68, 144, 72, 148);
 
-TFT_Rectangle(68, 178, 72, 182);
+TFT_Rectangle(68, 174, 72, 178);
+
+TFT_Rectangle(88, 68, 92, 72);
+
+TFT_Rectangle(88, 174, 92, 178);
 
 //FOURTH COLUMN
 
-TFT_Rectangle(116, 42, 120, 46);
+TFT_Rectangle(116, 38, 120, 42);
 
-TFT_Rectangle(116, 72, 120, 76);
+TFT_Rectangle(116, 68, 120, 72);
 
-TFT_Rectangle(116, 102, 120, 106);
+TFT_Rectangle(116, 98, 120, 102);
 
-TFT_Rectangle(116, 132, 120, 136);
+TFT_Rectangle(116, 128, 120, 132);
 
-TFT_Rectangle(116, 162, 120, 166);
+TFT_Rectangle(116, 158, 120, 162);
 
-TFT_Rectangle(116, 192, 120, 196);
+TFT_Rectangle(116, 188, 120, 192);
+
+TFT_Rectangle(142, 68, 146, 72);
+
+TFT_Rectangle(172, 68, 176, 72);
+
 
 
 //FIFTH COLUMN
 
-TFT_Rectangle(200, 42, 204, 46);
+TFT_Rectangle(200, 38, 204, 42);
 
-TFT_Rectangle(200, 72, 204, 76);
+TFT_Rectangle(200, 68, 204, 72);
 
-TFT_Rectangle(200, 102, 204, 106);
+TFT_Rectangle(200, 98, 204, 102);
 
-TFT_Rectangle(200, 132, 204, 136);
+TFT_Rectangle(200, 128, 204, 132);
 
-TFT_Rectangle(200, 162, 204, 166);
+TFT_Rectangle(200, 158, 204, 162);
 
-TFT_Rectangle(200, 192, 204, 196);
+TFT_Rectangle(200, 188, 204, 192);
 
-TFT_Rectangle(200, 42, 204, 46);
 
 //SIXTH COLUMN
 
@@ -568,19 +577,21 @@ TFT_Rectangle(252, 68, 256, 72);
 
 TFT_Rectangle(252, 98, 256, 102);
 
-TFT_Rectangle(252, 148, 256, 152);
+TFT_Rectangle(252, 144, 256, 148);
 
-TFT_Rectangle(252, 178, 256, 182);
+TFT_Rectangle(252, 174, 256, 178);
+
+TFT_Rectangle(228, 68, 232, 72);
+
+TFT_Rectangle(228, 174, 232, 178);
 
 //SEVENTH COLUMN
 
-TFT_Rectangle(278, 86, 282, 90);
+TFT_Rectangle(278, 98, 282, 102);
 
-TFT_Rectangle(278, 116, 282, 120);
+//TFT_Rectangle(278, 118, 282, 122);
 
-TFT_Rectangle(278, 146, 282, 150);
-
-
+TFT_Rectangle(278, 144, 282, 148);
 //ghost test ******
 TFT_Set_Pen(CL_FUCHSIA, 1);
 TFT_Set_Brush(1, CL_FUCHSIA, 0, 0, 0, 0);
@@ -649,7 +660,7 @@ void initializeGPIO(){
            GPIOC_CRH = 0x44444444; //SETS GPIOC HIGH as input
 
            GPIOD_CRL = 0x44444444; //SETS GPIOD LOW as input
-           GPIOD_CRH = 0x33333333; //SETS GPIOD HIGH as input
+           GPIOD_CRH = 0x33333333; //SETS GPIOD HIGH as output
 
 
            adcCONFIG();

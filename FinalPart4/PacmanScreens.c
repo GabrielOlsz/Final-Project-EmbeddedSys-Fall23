@@ -26,3 +26,4 @@ void HowtoScreen(){
     TFT_SET_FONT(TFT_defaultFont, CL_RED, FO_HORIZONTAL);
 
  }
+ 
