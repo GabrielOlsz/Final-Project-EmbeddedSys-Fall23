@@ -36,7 +36,7 @@ void TIMER1_ISR () iv IVT_INT_TIM1_UP {
 
 void TIMER3_ISR () iv IVT_INT_TIM3 {
   TIM3_SR.UIF = 0;               // Reset UIF flag so next interrupt can be recognized when UIF is set
-  GPIOE_ODR.B13 = GPIOE_ODR.B13;  //fix this LED, put it on a different LED that is unoccupied
+  //GPIOE_ODR.B13 = GPIOE_ODR.B13;  //fix this LED, put it on a different LED that is unoccupied
   //GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER! ALSO TOGGLES LIGHT PE14 based on TIMER SPEED with potentiometer
   gameTick = 1;
 }
@@ -92,8 +92,8 @@ void main() {
 //                 PlayScreen();
                  Seg7Display();
                  Timer3IntConfiguration();
-                 JoystickUART();
-                 pauseUART();
+//                 JoystickUART();
+//                 pauseUART();
 
 
         }
@@ -104,8 +104,13 @@ void TitleScreen(){
 
     if(JoyStickDir == 0){
      //Draw Title Screen Once
-    TFT_WRITE_TEXT("PACMAN GAME MADE BY GABE,ALEX,ANTHONY 2023", 10,220);
-     
+    TFT_SET_PEN(CL_WHITE,2);
+    TFT_Rectangle(0,0, 319, 239); //outline rectangle
+    TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
+    TFT_WRITE_TEXT("PAC-MAN  MADE BY GABE, ALEX, ANTHONY 2023", 15,220);
+//    TFT_Set_Brush(1, CL_BLUE, 0, 0, 0, 0);
+
+    JoyStickDir = 1;
     }
     if(JoyStickDir == 4){ //Press Joystick up
       ScreenStateMachine = 1; //Play Game
@@ -135,15 +140,12 @@ void ScreenSwitch(){
         break;
 
       case 3:
-        HowtoScreen();
+        VictoryScreen();
         break;
 
       case 4:
         GameOverScreen();
         break;
-
-      case 5:
-        VictoryScreen();
 
       default:
         TitleScreen();
@@ -165,10 +167,6 @@ void HighScoreScreen(){
 
  }
 
-
-void HowtoScreen(){
-
-}
 
 
 void ClearScreen(){
@@ -241,12 +239,9 @@ for(i = 0; i < numFood; i++){
 
 void PlayScreen(){
      
-    if(mapVar == 0){ //Used to only draw the map once, otherwise Screen will constantly refresh
+    if(mapVar == 0){ //Default, Only Happens Once, Draw map and character
      drawMap();
-     mapVar = 1;
-    }
-
-   if(JoyStickDir == 0){ //default, only happens once
+     //Draw PacMan
      player.x0 = 151;
      player.x1 = player.x0 + SIZE;
      player.y0 = 163;
@@ -259,7 +254,12 @@ void PlayScreen(){
      w = player.y0;
      e = player.x1;
      r = player.y1;
-   }
+     mapVar = 1;
+    }
+
+//   if(JoyStickDir == 0){ //default, only happens once
+//
+//   }
 
    else{
      TFT_Set_Pen(CL_BLACK, 1);
@@ -550,7 +550,7 @@ void InitializeUSART1(){ // Sub function which initializes the registers to enab
 //**************************************************************************************************
 
 
-
+/*
 void Joystick() {
           if(GPIOA_IDR.B6 == 1 & pa6state == 0){        //Function for RIGHT button
                           GPIOE_ODR = 0;
@@ -629,7 +629,7 @@ void Joystick() {
           }
 
 }
-
+*/
 
 //**************************************************************************************************
 void GPIODConfigInput(){

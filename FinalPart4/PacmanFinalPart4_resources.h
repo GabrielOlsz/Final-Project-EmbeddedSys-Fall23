@@ -23,13 +23,12 @@ void JoystickUART();
 
 //Screen Functions
 void ScreenSwitch();
-void VictoryScreen();
 void ClearScreen();
+void VictoryScreen(); //When all bits are collected
 void PlayScreen();
 void GameOverScreen();
 void HighScoreScreen();
 void TitleScreen();
-void HowtoScreen();
 
  #define SIZE 20        //actually acting as pacman size currently
  #define ENTITY_SIZE 5 //acting as how many pixels pacman moves currently - change names eventually
