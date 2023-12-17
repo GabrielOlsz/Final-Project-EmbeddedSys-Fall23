@@ -22,6 +22,9 @@ void pauseUART();
 void JoystickUART();
 int CheckGhostCollision();
 void Counter1Second();
+void I2C_init();
+void I2C_init_Master();
+
 
 //Screen Functions
 void ScreenSwitch();

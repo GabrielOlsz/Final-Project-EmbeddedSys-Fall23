@@ -77,6 +77,10 @@ void main() {
          Start_TP();                  //Start Display
          ClearScreen();               //Clear the display
          RCC_APB2ENR.IOPEEN = 1;
+         I2C_init();
+         I2C_init_Master();
+         highScore = I2C1_DR;
+
 
         for(;;) {
            ScreenSwitch();
@@ -102,6 +106,8 @@ void TitleScreen(){
     TFT_WRITE_TEXT("Start Game (Up)", 110,110);
     TFT_WRITE_TEXT("High Scores (Down)", 100,130);
     TFT_WRITE_TEXT("How to Play (Right)", 102,150);
+    TFT_SET_FONT(TFT_defaultfont, CL_PURPLE, FO_HORIZONTAL);
+    TFT_WRITE_TEXT("*Press Left To Reset If Screen Not Showing*", 30, 170);
 
     //Loop for drawing ghost bodies
     for(i = 0; i<numHomeGhosts; i++){
@@ -157,11 +163,10 @@ void TitleScreen(){
       ScreenStateMachine = 2; //High Score Screen
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
     }
-//Was used for debugging - remove comment chunk if needed
-//    if(JoyStickDir == 2){ //Press Joystick Left
-//      ScreenStateMachine = 3; //Victory Screen
-//      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
-//    }
+    if(JoyStickDir == 2){ //Press Joystick Left
+      ScreenStateMachine = 0; //Title Screen
+      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+    }
     if(JoyStickDir == 6){ //Press Joystick Right
       ScreenStateMachine = 5; //How To Play Screen
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
@@ -264,9 +269,51 @@ void GameOverScreen(){
     TFT_SET_PEN(CL_WHITE,2);
     TFT_Rectangle(0,0, 319, 239); //outline rectangle
     TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
-    TFT_WRITE_TEXT("GAME OVER!", 130,70);
+    TFT_WRITE_TEXT("GAME OVER!", 125,130);
     TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
     TFT_WRITE_TEXT("Back to Home (Left)", 105,210);
+    //Loop for drawing ghost bodies
+    for(i = 0; i<numHomeGhosts; i++){
+      if(i == 0){
+      TFT_Set_Pen(CL_RED, 1);
+      TFT_Set_Brush(1, CL_RED, 0, 0, 0, 0);
+      TFT_Rectangle_Round_Edges(homeghosts[i].x0,homeghosts[i].y0,homeghosts[i].x1,homeghosts[i].y1, 17);
+      TFT_Rectangle(homeghosts[i].x0,homeghosts[i].y0+20,homeghosts[i].x1,homeghosts[i].y1); //Fills in a gap when making ghost legs
+      }
+      else{
+      TFT_Set_Pen(CL_AQUA, 1);
+      TFT_Set_Brush(1, CL_AQUA, 0, 0, 0, 0);
+      TFT_Rectangle_Round_Edges(homeghosts[i].x0,homeghosts[i].y0,homeghosts[i].x1,homeghosts[i].y1, 17);
+      TFT_Rectangle(homeghosts[i].x0,homeghosts[i].y0+20,homeghosts[i].x1,homeghosts[i].y1); //Fills in a gap when making ghost legs
+      }
+    }
+
+    //Loop for drawing ghost legs
+    for(i = 0; i<numGhostLegs; i++){
+      if(i < 3){
+        TFT_Set_Pen(CL_RED, 1);
+        TFT_Set_Brush(1, CL_RED, 0, 0, 0, 0);
+        TFT_Circle(ghostLegs[i].x0,ghostLegs[i].y0, 5);
+      }
+      else{
+        TFT_Set_Pen(CL_AQUA, 1);
+        TFT_Set_Brush(1, CL_AQUA, 0, 0, 0, 0);
+        TFT_Circle(ghostLegs[i].x0,ghostLegs[i].y0, 5);
+      }
+    }
+
+    //Loops for drawing ghost eyes
+    for(i = 0; i < numHomeGhostEyes; i++){
+      TFT_Set_Pen(CL_WHITE, 1);
+      TFT_Set_Brush(1, CL_WHITE, 0, 0, 0, 0);
+      TFT_Circle(homeghosteyesWhite[i].x0, homeghosteyesWhite[i].y0, 6);
+      }
+    for(i = 0; i < numHomeGhostEyes; i++){
+      TFT_Set_Pen(CL_BLACK, 1);
+      TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
+      TFT_Circle(homeghosteyesBlack[i].x0, homeghosteyesBlack[i].y0, 3);
+    }
+
     JoyStickDir = 1;
     }
     if(JoyStickDir == 2){ //Press Joystick left
@@ -492,6 +539,7 @@ void PlayScreen(){
        drawFood();
        if(playerScore > highScore){
         highScore = playerScore;
+        I2C1_DR = highScore;
        }
        if(playerScore == numFood){ //If all of the food is collected, go to victory screen
          ScreenStateMachine = 3; //Victory Screen
@@ -941,5 +989,25 @@ void Counter1Second(){
   if(counter >= 99){    //When counter reaches 99 seconds, reset to 0
     counter = 0;
   }
+
+}
+
+void I2C_init(){
+     RCC_APB1ENR |= (1<<21);    //Enables clock for I2C1
+     RCC_APB2ENR |= (1<< 3);    //ENABLE GPIOB clock
+     AFIO_MAPR |= (1<<1);
+
+
+}
+
+void I2C_init_Master(){
+     I2C1_CR1 |= (1<<8);
+     I2C1_CR1 |= (1<<10);
+     I2C1_CR2 |= (0b100100<< 7);
+     I2C1_SR2 |= (1<<0);
+     I2C1_CCR |= (1<<15);
+     I2C1_OAR1 |= (0x08<<7);
+     I2C1_OAR1 |= (1<<15);
+
 
 }
