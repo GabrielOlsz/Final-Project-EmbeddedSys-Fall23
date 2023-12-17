@@ -2,13 +2,24 @@
 // Name: Alexander Castromonte, Gabriel Olszewski, Anthony Mauro
 // Date: 12/18/2023
 // Course: ELEC3371-01
-// Description:
-//
-//
+// Description: Pac-Man Video Game Project
+//              First user is prompted with a home Screen, follow the instructions on Screen.
+//              Use the Joystick to navigate the different screens. Logic is implemented to
+//              make the Pac-Man character move. The speed of Pac-Man can be changed by adjusting
+//              the potentiometer at the top right of the board. The current score can be displayed
+//              on the MET1155 when connected to PORTD/H. Pac-Man has collision detected on food
+//              pellets and walls to make sure food pellets are collected and that Pac-Man does
+//              not go through walls.
+//              BONUS OBJECTIVE 7: Turn on switch 8 (BUZZER) on SW14 on the board to hear a
+//              noise when Pac-Man moves around and when he collects a piece of food.
+//              BONUS OBJECTIVE 8: There is a ghost in the middle of the map that when collided
+//              with, will end the game and change to a game over Screen. The game is not complete
+//              enough to go and play the game again without resetting the board. Reset the board to
+//              play again because if not, the bits the user previously ate will not return unless
+//              the board is reset using the button in the top right of the board.
 //
 //**************************************************************************************************
 
-//**************************************************************************************************
 //VARIABLE/FUNCTION DECLARATIONS
 #include "PacmanFinalPart4_objects.h"
 #include "PacmanFinalPart4_resources.h" //Has all of the interrupt service routines for the Joystick buttons to work
@@ -146,6 +157,7 @@ void TitleScreen(){
       ScreenStateMachine = 2; //High Score Screen
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
     }
+//Was used for debugging - remove comment chunk if needed
 //    if(JoyStickDir == 2){ //Press Joystick Left
 //      ScreenStateMachine = 3; //Victory Screen
 //      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
@@ -478,6 +490,9 @@ void PlayScreen(){
        food[i].x1 = 1;
        food[i].y1 = 1;
        drawFood();
+       if(playerScore > highScore){
+        highScore = playerScore;
+       }
        if(playerScore == numFood){ //If all of the food is collected, go to victory screen
          ScreenStateMachine = 3; //Victory Screen
          JoyStickDir = 0; //Reset JoyStickDir for next screens that use it

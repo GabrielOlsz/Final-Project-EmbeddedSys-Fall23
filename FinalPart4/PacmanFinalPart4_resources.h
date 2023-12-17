@@ -103,7 +103,7 @@ unsigned long int w = 0;
 unsigned long int e = 0;
 unsigned long int r = 0;
 unsigned long int mapVar = 0;
-unsigned int highScore = 23;
+unsigned int highScore;
 unsigned int ASCII = 48;
 unsigned int highScoreLeft = 0;
 unsigned int highScoreRight = 0;

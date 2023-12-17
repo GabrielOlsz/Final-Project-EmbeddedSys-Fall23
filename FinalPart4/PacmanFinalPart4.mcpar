@@ -14,7 +14,7 @@ Value=0
 [BUILD_TYPE]
 Value=0
 [ACTIVE_TAB]
-Value=PacmanFinalPart4_resources.h
+Value=PacmanFinalPart4_main.c
 [USE_EEPROM]
 Value=0
 [USE_HEAP]
@@ -62,7 +62,8 @@ File1=TFT
 File2=TFT_Defs
 File3=TFT_Fonts
 File4=TFT_TouchPanel
-Count=5
+File5=I2C
+Count=6
 [EXPANDED_NODES]
 0=PacmanFinalPart4.mcpar
 1=Sources
