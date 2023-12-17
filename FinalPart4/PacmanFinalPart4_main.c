@@ -514,17 +514,25 @@ void PlayScreen(){
          ScreenStateMachine = 3; //Victory Screen
          JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
          playerScore = 0;
+         mapVar = 0;
+         //the struct Entities food[] should be redefined here, but C does not support that
+        //this means that when the game is played again after a victory, the eaten pellets
+        //will not return
        }
-
        GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER!
      }
-
 
      //if player has collided with a ghost then game over
      if(CheckGhostCollision() == 0){}
      if(CheckGhostCollision() == 1){
         ScreenStateMachine = 4;
         JoyStickDir = 0;
+        playerScore = 0;
+        mapVar = 0;
+        //the struct Entities food[] should be redefined here, but C does not support that
+        //this means that when the game is played again after a game over, the eaten pellets
+        //will not return
+
      }
      while(gameTick == 0){};
      gameTick = 0;
