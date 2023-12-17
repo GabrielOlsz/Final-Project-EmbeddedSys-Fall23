@@ -15,28 +15,18 @@
 #include "PacmanScreens.h"
 
 
-
-
 //INTERRUPT SERVICE ROUTINES
 void TIMER1_ISR () iv IVT_INT_TIM1_UP {
      TIM1_SR.UIF = 0;               //Reset UIF flag
      
-//Uncomment this section if a game timer is wanted on the MET1155
-/*
-             counter++;
-             //split counter into two numbers, ex: 25 will split to 2 and 5 to display on either left or right display
-             leftSide = counter / 10;
-             rightSide = counter % 10;
-
-             if(counter >= 99){    //When counter reaches 99 seconds, reset to 0
-                counter = 0;
-             }
-*/
+//Uncomment this function if a game timer is wanted on the MET1155 instead
+//In Seg7Display function playScore variable would need to be replaced with counter
+//Counter();
 }
 
 void TIMER3_ISR () iv IVT_INT_TIM3 {
   TIM3_SR.UIF = 0;               // Reset UIF flag so next interrupt can be recognized when UIF is set
-  //GPIOE_ODR.B13 = GPIOE_ODR.B13;  //fix this LED, put it on a different LED that is unoccupied
+  //GPIOE_ODR.B13 = GPIOE_ODR.B13;  //Should be put on a different LED, put it on a different LED that is unoccupied, will blink at rate of timer 3
   //GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER! ALSO TOGGLES LIGHT PE14 based on TIMER SPEED with potentiometer
   gameTick = 1;
 }
@@ -66,34 +56,23 @@ if((EXTI_PR & 0x0040) == 0x0040){
 }
 
 
-//void JoyStickClick() iv IVT_INT_EXTI15_10{
-//EXTI_PR.B13 = 1;
-//JoyStickDir = 13;
-//
-//}
-
-
-
 //MAIN FUNCTION
 void main() {
          initializeGPIO();            //Enable port clocks
          adcCONFIG();                 //Configure ADC read
          InitializeUSART1();          //Configure USART1
-         Timer1Configuration();
-         JoystickConfiguration();
-         Start_TP();
-         ClearScreen();
+         Timer1Configuration();       //Timer 1 Configuation
+         JoystickConfiguration();     //Joystick Configuration
+         Start_TP();                  //Start Display
+         ClearScreen();               //Clear the display
          RCC_APB2ENR.IOPEEN = 1;
 
-
-
         for(;;) {
-                 ScreenSwitch();
-                 Seg7Display();
-                 Timer3IntConfiguration();
-//                 JoystickUART();
-//                 pauseUART();
-
+           ScreenSwitch();
+           Seg7Display();
+           Timer3IntConfiguration();
+//           JoystickUART(); //Uncomment for using UART to display messages when a Joystick direction is pressed
+//           pauseUART();    //Uncomment to type 'p' or 'P' into UART and return UNPAUSED/PAUSED - However Not Functional
 
         }
 }
@@ -292,6 +271,10 @@ void HighScoreScreen(){
     TFT_Rectangle(0,0, 319, 239); //outline rectangle
     TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
     TFT_WRITE_TEXT("High  Scores", 130,70);
+    highScoreLeft = (highScore/10) + ASCII;
+    highScoreRight = (highScore % 10) + ASCII;
+    TFT_Write_Char(highScoreLeft, 160, 100);
+    TFT_Write_Char(highScoreRight, 169, 100);
     TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
     TFT_WRITE_TEXT("Back to Home (Left)", 105,210);
     JoyStickDir = 1;
@@ -312,21 +295,6 @@ void ClearScreen(){
   TFT_SET_BRUSH(1,CL_BLACK,0,0,0,0);
   TFT_RECTANGLE(1,1,319,239);
 }
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
- //**************************************************************************************************
 
 
 int CheckWallCollision(){
@@ -948,9 +916,15 @@ void pauseUART(){
 
 }
 
+void Counter1Second(){
 
+  counter++;
+  //split counter into two numbers, ex: 25 will split to 2 and 5 to display on either left or right display
+  leftSide = counter / 10;
+  rightSide = counter % 10;
 
+  if(counter >= 99){    //When counter reaches 99 seconds, reset to 0
+    counter = 0;
+  }
 
-
-
-
+}
