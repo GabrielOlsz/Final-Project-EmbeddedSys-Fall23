@@ -167,10 +167,10 @@ void TitleScreen(){
       ScreenStateMachine = 2; //High Score Screen
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
     }
-    if(JoyStickDir == 2){ //Press Joystick Left
-      ScreenStateMachine = 3; //Victory Screen
-      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
-    }
+//    if(JoyStickDir == 2){ //Press Joystick Left
+//      ScreenStateMachine = 3; //Victory Screen
+//      JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+//    }
     if(JoyStickDir == 6){ //Press Joystick Right
       ScreenStateMachine = 5; //How To Play Screen
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
@@ -217,6 +217,8 @@ void ScreenSwitch(){
 
 void VictoryScreen(){
      if(JoyStickDir == 0){  //Screen only prints once and does not loop
+        TFT_Set_Brush(1, CL_BLACK, 0, 0, 0, 0);
+        TFT_Rectangle(0,0, 320, 240);
         TFT_SET_PEN(CL_WHITE,2);
         TFT_Rectangle(0,0, 319, 239); //outline rectangle
         TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
@@ -228,14 +230,14 @@ void VictoryScreen(){
         TFT_WRITE_TEXT("Congratulations!", 115,130);
         TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
         TFT_WRITE_TEXT("High Score Page (Down)", 95,190);
-        TFT_WRITE_TEXT("Back to Home (Up)", 110,210);
+        TFT_WRITE_TEXT("Back to Home (Left)", 105,210);
         JoyStickDir = 1;
    }
    if(JoyStickDir == 5){ //Press Joystick down
       ScreenStateMachine = 2; //High Score Screen
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
     }
-   if(JoyStickDir == 4){ //Press Joystick up
+   if(JoyStickDir == 2){ //Press Joystick left
       ScreenStateMachine = 0; //Title Screen
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
     }
@@ -254,10 +256,10 @@ void HowToPlay(){
       TFT_WRITE_TEXT("* Food pellets are worth 1 point", 60,130);
       TFT_WRITE_TEXT("* Watch out for ghosts!", 60, 150);
       TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
-      TFT_WRITE_TEXT("Back to Home (Up)", 110,210);
+      TFT_WRITE_TEXT("Back to Home (Left)", 105,210);
       JoyStickDir = 1;
    }
-   if(JoyStickDir == 4){ //Press Joystick up
+   if(JoyStickDir == 2){ //Press Joystick Left
       ScreenStateMachine = 0; //Title Screen
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
     }
@@ -273,10 +275,10 @@ void GameOverScreen(){
     TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
     TFT_WRITE_TEXT("GAME OVER!", 130,70);
     TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
-    TFT_WRITE_TEXT("Back to Home (Up)", 110,210);
+    TFT_WRITE_TEXT("Back to Home (Left)", 105,210);
     JoyStickDir = 1;
     }
-    if(JoyStickDir == 4){ //Press Joystick up
+    if(JoyStickDir == 2){ //Press Joystick left
       ScreenStateMachine = 0; //Title Screen
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
     }
@@ -291,10 +293,10 @@ void HighScoreScreen(){
     TFT_SET_FONT(TFT_defaultfont, CL_YELLOW, FO_HORIZONTAL);
     TFT_WRITE_TEXT("High  Scores", 130,70);
     TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
-    TFT_WRITE_TEXT("Back to Home (Up)", 110,210);
+    TFT_WRITE_TEXT("Back to Home (Left)", 105,210);
     JoyStickDir = 1;
     }
-    if(JoyStickDir == 4){ //Press Joystick up
+    if(JoyStickDir == 2){ //Press Joystick left
       ScreenStateMachine = 0; //Title Screen
       JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
     }
@@ -508,12 +510,12 @@ void PlayScreen(){
        food[i].x1 = 1;
        food[i].y1 = 1;
        drawFood();
-       //Attempt to go to victory Screen after all food is collected
-      /* for(i = 0; i < numFood; i++){
-         if(food[i].x0 == 0 && food[i].y0 == 0 && food[i].x1 == 1 && food[i].y1 == 1){
-         ScreenStateMachine = 3;
-         }
-       } */
+       if(playerScore == numFood){ //If all of the food is collected, go to victory screen
+         ScreenStateMachine = 3; //Victory Screen
+         JoyStickDir = 0; //Reset JoyStickDir for next screens that use it
+         playerScore = 0;
+       }
+
        GPIOE_ODR.B14 = ~GPIOE_ODR.B14;  //BONUS OBJECTIVE BUZZER!
      }
 
