@@ -17,6 +17,8 @@
 //              enough to go and play the game again without resetting the board. Reset the board to
 //              play again because if not, the bits the user previously ate will not return unless
 //              the board is reset using the button in the top right of the board.
+//              Objective 5 with EEPROM is not working correctly, but the logic is correct.
+//              When the EEPROM logic is uncommented, the TFT Display stops working.
 //
 //**************************************************************************************************
 
