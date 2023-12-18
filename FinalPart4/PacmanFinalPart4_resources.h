@@ -22,8 +22,9 @@ void pauseUART();
 void JoystickUART();
 int CheckGhostCollision();
 void Counter1Second();
-void I2C_init();
-void I2C_init_Master();
+void EEPROM_24C02WrSingle(unsigned short wAddr, unsigned short wData);
+unsigned short EEPROM_24C02RdSingle(unsigned short rAddr);
+
 
 
 //Screen Functions
@@ -108,5 +109,6 @@ unsigned long int r = 0;
 unsigned long int mapVar = 0;
 unsigned int highScore;
 unsigned int ASCII = 48;
-unsigned int highScoreLeft = 0;
-unsigned int highScoreRight = 0;
+unsigned int highScoreLeft;
+unsigned int highScoreRight;
+char data_[256];

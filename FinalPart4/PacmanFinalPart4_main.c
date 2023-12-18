@@ -77,9 +77,8 @@ void main() {
          Start_TP();                  //Start Display
          ClearScreen();               //Clear the display
          RCC_APB2ENR.IOPEEN = 1;
-         I2C_init();
-         I2C_init_Master();
-         highScore = I2C1_DR;
+//         highScore = EEPROM_24C02RdSingle(1);
+//         highScore = EEPROM_24C02RdSingle(2);
 
 
         for(;;) {
@@ -332,6 +331,8 @@ void HighScoreScreen(){
     TFT_WRITE_TEXT("High  Scores", 130,70);
     highScoreLeft = (highScore/10) + ASCII;
     highScoreRight = (highScore % 10) + ASCII;
+//    highScoreLeft = EEPROM_24C02RdSingle(0);
+//    highScoreRight = EEPROM_24C02RdSingle(1);
     TFT_Write_Char(highScoreLeft, 160, 100);
     TFT_Write_Char(highScoreRight, 169, 100);
     TFT_SET_FONT(TFT_defaultfont, CL_AQUA, FO_HORIZONTAL);
@@ -539,7 +540,10 @@ void PlayScreen(){
        drawFood();
        if(playerScore > highScore){
         highScore = playerScore;
-        I2C1_DR = highScore;
+//        highScoreLeft = (highScore/10) + ASCII;
+//        highScoreRight = (highScore % 10) + ASCII;
+//        EEPROM_24C02WrSingle(1, highScoreLeft);
+//        EEPROM_24C02WrSingle(2, highScoreRight);
        }
        if(playerScore == numFood){ //If all of the food is collected, go to victory screen
          ScreenStateMachine = 3; //Victory Screen
@@ -992,22 +996,20 @@ void Counter1Second(){
 
 }
 
-void I2C_init(){
-     RCC_APB1ENR |= (1<<21);    //Enables clock for I2C1
-     RCC_APB2ENR |= (1<< 3);    //ENABLE GPIOB clock
-     AFIO_MAPR |= (1<<1);
+void EEPROM_24C02WrSingle(unsigned short wAddr, unsigned short wData) {
+  data_[0] = wAddr;
+  data_[1] = wData;
+  I2C1_Start();
+  // issue I2C start signal
+  I2C1_Write(0x50,data_,2,END_MODE_STOP);
+}//~
 
+//--------------- Reads data from 24C02 EEPROM - single location (random)
+unsigned short EEPROM_24C02RdSingle(unsigned short rAddr) {
+  data_[0] = rAddr;
+  I2C1_Start();              // issue I2C start signal
+  I2C1_Write(0x50,data_,1,END_MODE_RESTART);
+  I2C1_Read(0x50,data_,1,END_MODE_STOP);
 
-}
-
-void I2C_init_Master(){
-     I2C1_CR1 |= (1<<8);
-     I2C1_CR1 |= (1<<10);
-     I2C1_CR2 |= (0b100100<< 7);
-     I2C1_SR2 |= (1<<0);
-     I2C1_CCR |= (1<<15);
-     I2C1_OAR1 |= (0x08<<7);
-     I2C1_OAR1 |= (1<<15);
-
-
+  return data_[0];
 }
